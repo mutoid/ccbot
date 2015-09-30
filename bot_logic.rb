@@ -27,6 +27,7 @@ class BotLogic < Sinatra::Base
         "text" => response_text,
         "channel" => channel
       }
+      puts "Posting #{payload.inspect} to url #{uri}"
       response = Net::HTTP.post_form(uri, payload)
       puts response
       puts response.body
