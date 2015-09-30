@@ -3,6 +3,7 @@ require 'sinatra/base'
 require 'net/http'
 require 'uri'
 require 'json'
+require 'logger'
 
 SLACK_DOMAIN = ENV['SLACK_DOMAIN']
 SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
