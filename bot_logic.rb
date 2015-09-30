@@ -22,6 +22,7 @@ class BotLogic < Sinatra::Base
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}")
       response = Net::HTTP.post_form(uri, {"token" => SLACKBOT_TOKEN, "data" => response_text })
       puts response
+      puts response.body
     rescue Exception => e
       logger.info "Got exception #{e}"
       puts "WTF!"
