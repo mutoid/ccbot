@@ -9,7 +9,7 @@ SLACK_DOMAIN = ENV['SLACK_DOMAIN']
 SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 
-logger = Logger.new('app.log', 10, 1024000)
+logger = Logger.new(STDOUT)
 
 class BotLogic < Sinatra::Base
   get('/') do
