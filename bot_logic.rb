@@ -9,6 +9,10 @@ SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 
 class BotLogic < Sinatra::Base
+  get('/') do
+    "I'm up."
+  end
+
   post('/lenny') do
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
     response_text = "( ͡° ͜ʖ ͡°)"
