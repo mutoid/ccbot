@@ -14,11 +14,13 @@ logger = Logger.new(STDOUT)
 class BotLogic < Sinatra::Base
   get('/') do
     logger.info "Processing get / request"
+    puts "Got get"
     "I'm up."
   end
 
   post('/lenny') do
     logger.info "Processing /lenny command"
+    puts "Got post"
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
     response_text = "( ͡° ͜ʖ ͡°)"
     begin
@@ -26,6 +28,7 @@ class BotLogic < Sinatra::Base
       response = Net::HTTP.post_form(uri, {"token" => SLACKBOT_TOKEN, "data" => response_text })
     rescue Exception => e
       logger.info "Got exception #{e}"
+      puts "WTF!"
       raise e
     end
   end
