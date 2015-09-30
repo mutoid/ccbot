@@ -18,9 +18,16 @@ class BotLogic < Sinatra::Base
     puts "Processing /lenny command"
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
     response_text = "( ͡° ͜ʖ ͡°)"
+    puts params
+    channel = "#general"
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}")
-      response = Net::HTTP.post_form(uri, {"token" => SLACKBOT_TOKEN, "data" => response_text })
+      payload = {
+        "token" => SLACKBOT_TOKEN,
+        "text" => response_text,
+        "channel" => channel
+      }
+      response = Net::HTTP.post_form(uri, payload)
       puts response
       puts response.body
     rescue Exception => e
