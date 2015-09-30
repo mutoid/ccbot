@@ -1,4 +1,4 @@
 #\ -s puma
 
-require './botlogic'
+require './bot_logic.rb'
 run BotLogic
