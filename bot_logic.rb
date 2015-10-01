@@ -19,7 +19,7 @@ class BotLogic < Sinatra::Base
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
     response_text = "( ͡° ͜ʖ ͡°)"
     puts params
-    channel = "#general"
+    channel = "general"
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}")
       payload = {
