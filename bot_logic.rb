@@ -24,7 +24,7 @@ class BotLogic < Sinatra::Base
     lenny = "( ͡° ͜ʖ ͡°)"
 
     if last_lenny && last_lenny + 20 > Time.now
-      return "Wait a bit, will ya?"
+      break "Wait a bit, will ya?"
 
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
