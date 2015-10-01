@@ -17,7 +17,7 @@ class BotLogic < Sinatra::Base
   post('/lenny') do
     puts "Processing /lenny command"
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
-    response_text = "( ͡° ͜ʖ ͡°)"
+    lenny = "( ͡° ͜ʖ ͡°)"
     puts params
     channel = params[:channel_id]
     begin
@@ -25,12 +25,12 @@ class BotLogic < Sinatra::Base
 #      params = {
 #        token: SLACKBOT_TOKEN,
 #        channel: channel,
-#        body: response_text
+#        body: lenny
 #      }
 #      puts "Posting #{params.inspect} to url #{uri}"
-      request = Net::HTTP::Post.new(url.path)
       http = Net::HTTP.new(url.host, url.port)
-      request.body = response_text
+      request = Net::HTTP::Post.new(uri)
+      request.body = lenny
       response = http.request(request)
       puts response
       puts response.body
