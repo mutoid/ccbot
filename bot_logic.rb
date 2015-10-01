@@ -22,10 +22,8 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
 
     lenny = "( ͡° ͜ʖ ͡°)"
-
-    if last_lenny && last_lenny + 20 > Time.now
-      break "Wait a bit, will ya?"
-    end
+    
+    break "Wait a bit, will ya?" if last_lenny && last_lenny + 20 > Time.now
 
     last_lenny = Time.now
 
