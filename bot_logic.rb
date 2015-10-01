@@ -28,7 +28,7 @@ class BotLogic < Sinatra::Base
 #        body: response_text
 #      }
 #      puts "Posting #{params.inspect} to url #{uri}"
-      request = Net::HTTP.Post.new(url.path)
+      request = Net::HTTP::Post.new(url.path)
       http = Net::HTTP.new(url.host, url.port)
       request.body = response_text
       response = http.request(request)
