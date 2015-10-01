@@ -22,13 +22,13 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
-      params = {
-        token: SLACKBOT_TOKEN,
-        channel: channel,
-        body: response_text
-      }
-      puts "Posting #{params.inspect} to url #{uri}"
-      response = Net::HTTP.post_form(uri, params)
+#      params = {
+#        token: SLACKBOT_TOKEN,
+#        channel: channel,
+#        body: response_text
+#      }
+#      puts "Posting #{params.inspect} to url #{uri}"
+      response = Net::HTTP.post_form(uri, response_text)
       puts response
       puts response.body
     rescue Exception => e
