@@ -19,16 +19,16 @@ class BotLogic < Sinatra::Base
     # post response to $SLACK_DOMAIN$SLACKBOT_ENDPOINT$SLACKBOT_TOKEN
     response_text = "( ͡° ͜ʖ ͡°)"
     puts params
-    channel = "general"
+    channel = "#general"
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}")
-      payload = {
-        "token" => SLACKBOT_TOKEN,
-        "text" => response_text,
-        "channel" => channel
+      params = {
+        token: SLACKBOT_TOKEN,
+        channel: channel,
+        body: response_text
       }
-      puts "Posting #{payload.inspect} to url #{uri}"
-      response = Net::HTTP.post_form(uri, payload)
+      puts "Posting #{params.inspect} to url #{uri}"
+      response = Net::HTTP.post_form(uri, params)
       puts response
       puts response.body
     rescue Exception => e
