@@ -21,7 +21,7 @@ class BotLogic < Sinatra::Base
     puts params
     channel = "#general"
     begin
-      uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}")
+      uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
       params = {
         token: SLACKBOT_TOKEN,
         channel: channel,
