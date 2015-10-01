@@ -8,6 +8,8 @@ SLACK_DOMAIN = ENV['SLACK_DOMAIN']
 SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 
+last_lenny = nil
+
 class BotLogic < Sinatra::Base
   get('/') do
     puts "Processing get / request"
@@ -20,6 +22,9 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
 
     lenny = "( ͡° ͜ʖ ͡°)"
+
+    if last_lenny && last_lenny + 20 > Time.now
+      return "Wait a bit, will ya?"
 
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
