@@ -28,7 +28,7 @@ class BotLogic < Sinatra::Base
 #        body: response_text
 #      }
 #      puts "Posting #{params.inspect} to url #{uri}"
-      response = Net::HTTP.post_form(uri, { body: response_text })
+      response = Net::HTTP.post_form(uri, { data: response_text })
       puts response
       puts response.body
     rescue Exception => e
