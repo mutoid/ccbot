@@ -3,12 +3,17 @@ require 'sinatra/base'
 require 'net/http'
 require 'uri'
 require 'json'
+require 'sinatra'
+require 'sinatra/activerecord'
+require './environments'
+
+class RunCommand < ActiveRecord::Base
+end
 
 SLACK_DOMAIN = ENV['SLACK_DOMAIN']
 SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
-
-@last_lenny = nil
+FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
 class BotLogic < Sinatra::Base
   get('/') do
@@ -19,13 +24,35 @@ class BotLogic < Sinatra::Base
   post('/lenny') do
     puts "Processing /lenny command"
     puts "Params: ", params
+
+    # This is common logic and should get factored out if more commands get made.
     channel = params[:channel_id]
+    user_name = params[:user_name]
+    user_id = params[:user_id]
+    command_parts = params[:command].split(' ')
+    command = command_parts.first
 
     lenny = "( ͡° ͜ʖ ͡°)"
     
-    break "Wait a bit, will ya?" if @last_lenny && @last_lenny + 20 > Time.now
+    # break "Wait a bit, will ya?" if @last_lenny && @last_lenny + 20 > Time.now
 
-    @last_lenny = Time.now
+    # @last_lenny = Time.now
+
+    commands_by_user = RunCommand.where user_id: user_id, command: command
+    puts "#{user_name} has run this command #{commands_by_user.size} times."
+
+    if commands_by_user.size > 0
+      last_lenny = commands_by_user.last
+      break "Wait a bit, will ya?" if last_lenny.created_at + 20.seconds > Time.now
+    end
+
+    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command.save
+
+    if FAKE_RESPONSE
+      puts "#{user_name} did a lenny."
+      break lenny
+    end
 
     begin
       uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
