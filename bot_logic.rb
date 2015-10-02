@@ -52,9 +52,9 @@ class BotLogic < Sinatra::Base
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
-    lenny_count = RunCommand.where("created_at >= ?", Time.now - 30.seconds).count
+    lenny_count = RunCommand.where("created_at >= ?", Time.now - 10.seconds).count
     puts "recent lenny count = #{lenny_count}"
-    lenny_index = [lenny_count - 1, 2].max
+    lenny_index = [lenny_count - 1, 2].min
     lenny = lennys[lenny_index]
 
     if FAKE_RESPONSE
