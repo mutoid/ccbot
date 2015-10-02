@@ -43,7 +43,7 @@ class BotLogic < Sinatra::Base
 
     if commands_by_user.size > 0
       last_lenny = commands_by_user.last
-      break "Wait a bit, will ya?" if last_lenny.created_at + 20.seconds > Time.now
+      break "Wait a bit, will ya?" if last_lenny.created_at + 30.seconds > Time.now && user_name != "gaywallet"
     end
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
