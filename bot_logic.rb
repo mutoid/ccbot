@@ -50,8 +50,8 @@ class BotLogic < Sinatra::Base
       return "There was an error: #{e.message}"
     end
     output =  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
-    output << " => #{result.inspect}"
-    puts "Result is #{result.inspect}"
+    output << " => #{result}"
+    puts "Result is #{result}"
     chat_out(output, channel)
   end
 
