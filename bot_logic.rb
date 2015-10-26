@@ -18,7 +18,7 @@ SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
-# TODO: Put this in the database!
+# TODO: Put this in the database!!
 POWER_USERS = ["mutoid", "gaywallet"]
 ADMIN_USERS = ["mutoid"]
 
