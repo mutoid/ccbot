@@ -52,7 +52,7 @@ class BotLogic < Sinatra::Base
     output =  "_#{user_name} ran the Ruby code: #{code}\n_"
     output << " => #{result.inspect}"
     puts "Result is #{result.inspect}"
-    chat_out(result, channel)
+    chat_out(output, channel)
   end
 
   post('/lenny') do
