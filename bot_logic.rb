@@ -35,7 +35,7 @@ class BotLogic < Sinatra::Base
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user = ADMIN_USERS.include? user_name
-    return "You don't have permission to do this dangerous action." if !ADMIN_USERS.include? user_name
+    return "You don't have permission to do this." if !ADMIN_USERS.include? user_name
     code = params[:command].sub(/^\/ruby /, '')
 
     # #YOLO dawg
@@ -49,7 +49,7 @@ class BotLogic < Sinatra::Base
     output =  "_#{user} ran the Ruby code: #{code}\n_"
     output << " => #{result.inspect}"
     puts "Result is #{result.inspect}"
-    chat_out(message)
+    chat_out(message, channel)
   end
 
   post('/lenny') do
@@ -90,13 +90,13 @@ class BotLogic < Sinatra::Base
       break lenny
     end
 
-    chat_out(lenny)
+    chat_out(lenny, channel)
   end
 
   run! if app_file == $0
 end
 
-def chat_out(message)
+def chat_out(message, channel)
   begin
     uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
     http = Net::HTTP.new(uri.host, uri.port)
