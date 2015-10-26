@@ -39,6 +39,7 @@ class BotLogic < Sinatra::Base
     code = params[:text]
 
     # #YOLO dawg
+    result = nil
     begin
       Timeout.timeout(10) do
         result = eval(code)
@@ -51,7 +52,7 @@ class BotLogic < Sinatra::Base
     output =  "_#{user_name} ran the Ruby code: #{code}\n_"
     output << " => #{result.inspect}"
     puts "Result is #{result.inspect}"
-    chat_out(message, channel)
+    chat_out(result, channel)
   end
 
   post('/lenny') do
