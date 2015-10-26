@@ -64,10 +64,10 @@ class BotLogic < Sinatra::Base
     command_parts = params[:command].split(' ')
     command = command_parts.first
 
-    Lennys = ["( ͡° ͜ʖ ͡°)",
+    lennys = ["( ͡° ͜ʖ ͡°)",
               "( ͡o ͜ʖ ͡o)",
               "ᕦ( ͡° ͜ʖ ͡°)ᕤ You did it!",
-             "( ͠° ͟ʖ ͡°)"]
+              "( ͠° ͟ʖ ͡°)"]
 
     commands_by_user = RunCommand.where user_id: user_id, command: command
     puts "#{user_name} has run this command #{commands_by_user.size} times."
