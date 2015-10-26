@@ -48,7 +48,7 @@ class BotLogic < Sinatra::Base
     rescue StandardError => e
       return "There was an error: #{e.message}"
     end
-    output =  "_#{user} ran the Ruby code: #{code}\n_"
+    output =  "_#{user_name} ran the Ruby code: #{code}\n_"
     output << " => #{result.inspect}"
     puts "Result is #{result.inspect}"
     chat_out(message, channel)
