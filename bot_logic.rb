@@ -28,7 +28,7 @@ class BotLogic < Sinatra::Base
     "I'm up."
   end
 
-  puts('/ruby') do
+  post('/ruby') do
     puts "Evaluating Ruby code from the web, WCGW?"
     puts "Params: ", params
     channel = params[:channel_id]
