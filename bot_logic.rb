@@ -5,6 +5,7 @@ require 'sinatra/base'
 require 'net/http'
 require 'uri'
 require 'json'
+require 'timeout'
 require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
@@ -17,12 +18,38 @@ SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
+# TODO: Put this in the database!
 POWER_USERS = ["mutoid", "gaywallet"]
+ADMIN_USERS = ["mutoid"]
 
 class BotLogic < Sinatra::Base
   get('/') do
     puts "Processing get / request"
     "I'm up."
+  end
+
+  puts('/ruby') do
+    puts "Evaluating Ruby code from the web, WCGW?"
+    puts "Params: ", params
+    channel = params[:channel_id]
+    user_name = params[:user_name]
+    user_id = params[:user_id]
+    power_user = ADMIN_USERS.include? user_name
+    return "You don't have permission to do this dangerous action." if !ADMIN_USERS.include? user_name
+    code = params[:command].sub(/^\/ruby /, '')
+
+    # #YOLO dawg
+    begin
+      Timeout.timeout(10) do
+        result = eval(code)
+      end
+    rescue StandardError => e
+      return "There was an error: #{e.message}"
+    end
+    output =  "_#{user} ran the Ruby code: #{code}\n_"
+    output << " => #{result.inspect}"
+    puts "Result is #{result.inspect}"
+    chat_out(message)
   end
 
   post('/lenny') do
@@ -37,7 +64,7 @@ class BotLogic < Sinatra::Base
     command_parts = params[:command].split(' ')
     command = command_parts.first
 
-    lennys = ["( ͡° ͜ʖ ͡°)",
+    Lennys = ["( ͡° ͜ʖ ͡°)",
               "( ͡o ͜ʖ ͡o)",
               "ᕦ( ͡° ͜ʖ ͡°)ᕤ You did it!",
              "( ͠° ͟ʖ ͡°)"]
@@ -63,22 +90,26 @@ class BotLogic < Sinatra::Base
       break lenny
     end
 
-    begin
-      uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      request = Net::HTTP::Post.new(uri)
-      request.body = lenny
-      response = http.request(request)
-
-      puts response
-      puts response.body
-    rescue Exception => e
-      logger.info "Got exception #{e}"
-      puts "WTF!"
-      raise e
-    end
+    chat_out(lenny)
   end
 
   run! if app_file == $0
+end
+
+def chat_out(message)
+  begin
+    uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    request = Net::HTTP::Post.new(uri)
+    request.body = message
+      response = http.request(request)
+      
+      puts response
+      puts response.body
+  rescue StandardError => e
+    logger.info "Got exception #{e}"
+    puts "WTF!"
+    raise e
+  end
 end
