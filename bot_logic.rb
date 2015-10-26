@@ -36,7 +36,7 @@ class BotLogic < Sinatra::Base
     user_id = params[:user_id]
     power_user = ADMIN_USERS.include? user_name
     return "You don't have permission to do this." if !ADMIN_USERS.include? user_name
-    code = params[:command].sub(/^\/ruby /, '')
+    code = params[:text]
 
     # #YOLO dawg
     begin
