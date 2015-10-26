@@ -43,6 +43,8 @@ class BotLogic < Sinatra::Base
       Timeout.timeout(10) do
         result = eval(code)
       end
+    rescue SyntaxError => se
+      return "There was a syntax error in #{code} #{se.message}"
     rescue StandardError => e
       return "There was an error: #{e.message}"
     end
