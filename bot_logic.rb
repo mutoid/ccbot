@@ -20,7 +20,7 @@ FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
 # TODO: Put this in the database!!
 POWER_USERS = ["mutoid", "gaywallet"]
-ADMIN_USERS = ["mutoid", "the1rgood"]
+ADMIN_USERS = ["mutoid", "the1rgood", "pm_me_your_gaps"]
 
 class BotLogic < Sinatra::Base
   get('/') do
