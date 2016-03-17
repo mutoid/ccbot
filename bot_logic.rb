@@ -13,6 +13,9 @@ require './environments'
 class RunCommand < ActiveRecord::Base
 end
 
+class UserPrivileges < ActiveRecord::Base
+end
+
 SLACK_DOMAIN = ENV['SLACK_DOMAIN']
 SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
@@ -121,20 +124,20 @@ def lenny_graph
   total_count = RunCommand.count;
   name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1;
   report = RunCommand.pluck(:user_name, :command).group_by { |x, y| x }.map { |x, y| [ x, y.count ] };
-  MAX_BAR = report.max_by { |name, count| count }.last;
-  REPORT_WIDTH = 18.0;
-  NAME_FORMAT_STRING = "%-#{name_length}.#{name_length}s";
-  lenny_scale = (MAX_BAR / REPORT_WIDTH).round(2);
+  max_bar = report.max_by { |name, count| count }.last;
+  report_width = 18.0;
+  name_format_string = "%-#{name_length}.#{name_length}s";
+  lenny_scale = (max_bar / report_width).round(2);
   def count_to_lenny(count);
       lenny_full = '( ͡° ͜ʖ ͡°)';
       lenny_2_3 = '( ͡° ͜ʖ';
       lenny_1_3 = '( ͡°';
-      lennies = (REPORT_WIDTH * count / MAX_BAR);
+      lennies = (report_width * count / max_bar);
       whole_lennies = lennies.to_i;
       remainder = lennies - whole_lennies;
       lenny_full * lennies + (remainder > 0.66 ? lenny_2_3 : (remainder > 0.33 ? lenny_1_3 : ""));
   end;
-  report.sort_by(&:last).reverse!.map { |name, count| "#{NAME_FORMAT_STRING % name}|#{count_to_lenny(count)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + '
+  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + '
   ').join('
   ')
 end
