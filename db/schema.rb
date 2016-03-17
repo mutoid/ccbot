@@ -11,12 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151002084946) do
+ActiveRecord::Schema.define(version: 20160317225850) do
 
   create_table "run_commands", force: :cascade do |t|
     t.string   "user_name"
     t.string   "user_id"
     t.string   "command"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "user_privileges", force: :cascade do |t|
+    t.string   "user_id"
+    t.integer  "power_user"
+    t.integer  "admin_user"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

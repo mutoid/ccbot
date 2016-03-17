@@ -13,7 +13,7 @@ require './environments'
 class RunCommand < ActiveRecord::Base
 end
 
-class UserPrivileges < ActiveRecord::Base
+class UserPrivilege < ActiveRecord::Base
 end
 
 SLACK_DOMAIN = ENV['SLACK_DOMAIN']
@@ -156,13 +156,13 @@ def ascii_to_fullwidth s
   s.each_char.to_a.map { |c| wide_map[c.ord] }.pack('U*')
 end
 
-def crossword s
-  a = ascii_to_fullwidth(s).each_char.to_a
+def cross_word s
+  a = ascii_to_fullwidth(s.upcase).each_char.to_a
   "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
 end
 
-def cubeword s
-  a = ascii_to_fullwidth(s).each_char.to_a
+def cube_word s
+  a = ascii_to_fullwidth(s.upcase).each_char.to_a
   "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
 end
 
