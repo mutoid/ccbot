@@ -116,3 +116,53 @@ def chat_out(message, channel)
     raise e
   end
 end
+
+def lenny_graph
+  total_count = RunCommand.count;
+  name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1;
+  report = RunCommand.pluck(:user_name, :command).group_by { |x, y| x }.map { |x, y| [ x, y.count ] };
+  MAX_BAR = report.max_by { |name, count| count }.last;
+  REPORT_WIDTH = 18.0;
+  NAME_FORMAT_STRING = "%-#{name_length}.#{name_length}s";
+  lenny_scale = (MAX_BAR / REPORT_WIDTH).round(2);
+  def count_to_lenny(count);
+      lenny_full = '( ͡° ͜ʖ ͡°)';
+      lenny_2_3 = '( ͡° ͜ʖ';
+      lenny_1_3 = '( ͡°';
+      lennies = (REPORT_WIDTH * count / MAX_BAR);
+      whole_lennies = lennies.to_i;
+      remainder = lennies - whole_lennies;
+      lenny_full * lennies + (remainder > 0.66 ? lenny_2_3 : (remainder > 0.33 ? lenny_1_3 : ""));
+  end;
+  report.sort_by(&:last).reverse!.map { |name, count| "#{NAME_FORMAT_STRING % name}|#{count_to_lenny(count)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + '
+  ').join('
+  ')
+end
+
+def ascii_to_fullwidth s
+  wide_map = Hash[(0x21..0x7F).map { |x| [x, x + 0xFEE0] }]
+  wide_map[0x20] = 0x3000 # space
+  wide_map[0x22] = 0x309B # quote
+  wide_map[0x2C] = 0x3001 # comma
+  wide_map[0x2D] = 0x30FC # minus
+  wide_map[0x2E] = 0x3002 # period
+  wide_map[0x3C] = 0x3008 # LT
+  wide_map[0x3E] = 0x3009 # GT
+  wide_map[0x60] = 0x2018 # grave accent
+
+  s.each_char.to_a.map { |c| wide_map[c.ord] }.pack('U*')
+end
+
+def crossword s
+  a = ascii_to_fullwidth(s).each_char.to_a
+  "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
+end
+
+def cubeword s
+  a = ascii_to_fullwidth(s).each_char.to_a
+  "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
+end
+
+def random_user
+  "Randomly-selected user who has run /lenny is: #{RunCommand.all.uniq { |x| x.user_id }.map(&:user_name).sample}"
+end
