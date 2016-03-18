@@ -167,7 +167,7 @@ def random_user
 end
 
 def user_privs user_id
-  user = UserPrivileges.where(user_id: user_id).first
+  user = UserPrivilege.where(user_id: user_id).first
   return [false, false] if !user
   return [user.power_user, user.admin_user]
 end
