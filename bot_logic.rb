@@ -21,10 +21,6 @@ SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
 SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
-# TODO: Put this in the database!!
-POWER_USERS = ["mutoid", "gaywallet"]
-ADMIN_USERS = ["mutoid", "the1rgood", "pm_me_your_gaps"]
-
 class BotLogic < Sinatra::Base
   get('/') do
     puts "Processing get / request"
@@ -37,8 +33,8 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user = ADMIN_USERS.include? user_name
-    return "You don't have permission to do this." if !ADMIN_USERS.include? user_name
+    [power_user, admin_user] = user_privs(user_id)
+    return "You don't have permission to do this." if !admin_user
     code = params[:text]
 
     # #YOLO dawg
@@ -66,7 +62,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user = POWER_USERS.include? user_name
+    [power_user, admin_user] = user_privs(user_id)
     command_parts = params[:command].split(' ')
     command = command_parts.first
 
@@ -168,4 +164,10 @@ end
 
 def random_user
   "Randomly-selected user who has run /lenny is: #{RunCommand.all.uniq { |x| x.user_id }.map(&:user_name).sample}"
+end
+
+def user_privs user_id
+  user = UserPrivileges.where(user_id: user_id).first
+  return [false, false] if !user
+  return [user.power_user, user.admin_user]
 end
