@@ -150,7 +150,7 @@ def ascii_to_fullwidth s
   wide_map[0x3F] = 0xFF1F # question mark
   wide_map[0x60] = 0x2018 # grave accent
 
-  s.each_char.to_a.map { |c| wide_map[c.ord] || c }.pack('U*')
+  s.each_char.to_a.map { |c| wide_map[c.ord] || c.ord }.pack('U*')
 end
 
 def cross_word s
