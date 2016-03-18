@@ -116,8 +116,7 @@ def chat_out(message, channel)
   end
 end
 
-
-def count_to_lenny(count, report_width)
+def count_to_lenny(count, report_width, max_bar)
   lenny_full = '( ͡° ͜ʖ ͡°)'
   lenny_2_3 = '( ͡° ͜ʖ'
   lenny_1_3 = '( ͡°'
@@ -127,15 +126,14 @@ def count_to_lenny(count, report_width)
   lenny_full * lennies + (remainder > 0.66 ? lenny_2_3 : (remainder > 0.33 ? lenny_1_3 : ""))
 end
 
-def lenny_graph
+def lenny_graph(report_width=12.0)
   total_count = RunCommand.count
   name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1
-  report = RunCommand.pluck(:user_name, :command).group_by { |x, y| x }.map { |x, y| [ x, y.count ] }
+  report = RunCommand.where(command: '/lenny').map { |x| [x.user_id, x.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
   max_bar = report.max_by { |name, count| count }.last
-  report_width = 18.0
   name_format_string = "%-#{name_length}.#{name_length}s"
   lenny_scale = (max_bar / report_width).round(2)
-  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count, report_width)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
+  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count, report_width, max_bar)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
 end
 
 def ascii_to_fullwidth s
