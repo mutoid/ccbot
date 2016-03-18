@@ -127,6 +127,7 @@ def count_to_lenny(count, report_width, max_bar)
 end
 
 def lenny_graph(report_width=12.0)
+  report_width = report_width.to_f
   total_count = RunCommand.count
   name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1
   report = RunCommand.where(command: '/lenny').map { |x| [x.user_id, x.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
