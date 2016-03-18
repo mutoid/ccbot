@@ -147,9 +147,10 @@ def ascii_to_fullwidth s
   wide_map[0x2E] = 0x3002 # period
   wide_map[0x3C] = 0x3008 # LT
   wide_map[0x3E] = 0x3009 # GT
+  wide_map[0x3F] = 0xFF1F # question mark
   wide_map[0x60] = 0x2018 # grave accent
 
-  s.each_char.to_a.map { |c| wide_map[c.ord] }.pack('U*')
+  s.each_char.to_a.map { |c| wide_map[c.ord] || c }.pack('U*')
 end
 
 def cross_word s
