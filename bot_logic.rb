@@ -116,26 +116,26 @@ def chat_out(message, channel)
   end
 end
 
+
+def count_to_lenny(count, report_width)
+  lenny_full = '( ͡° ͜ʖ ͡°)'
+  lenny_2_3 = '( ͡° ͜ʖ'
+  lenny_1_3 = '( ͡°'
+  lennies = (report_width * count / max_bar)
+  whole_lennies = lennies.to_i
+  remainder = lennies - whole_lennies
+  lenny_full * lennies + (remainder > 0.66 ? lenny_2_3 : (remainder > 0.33 ? lenny_1_3 : ""))
+end
+
 def lenny_graph
-  total_count = RunCommand.count;
-  name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1;
-  report = RunCommand.pluck(:user_name, :command).group_by { |x, y| x }.map { |x, y| [ x, y.count ] };
-  max_bar = report.max_by { |name, count| count }.last;
-  report_width = 18.0;
-  name_format_string = "%-#{name_length}.#{name_length}s";
-  lenny_scale = (max_bar / report_width).round(2);
-  def count_to_lenny(count);
-      lenny_full = '( ͡° ͜ʖ ͡°)';
-      lenny_2_3 = '( ͡° ͜ʖ';
-      lenny_1_3 = '( ͡°';
-      lennies = (report_width * count / max_bar);
-      whole_lennies = lennies.to_i;
-      remainder = lennies - whole_lennies;
-      lenny_full * lennies + (remainder > 0.66 ? lenny_2_3 : (remainder > 0.33 ? lenny_1_3 : ""));
-  end;
-  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + '
-  ').join('
-  ')
+  total_count = RunCommand.count
+  name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1
+  report = RunCommand.pluck(:user_name, :command).group_by { |x, y| x }.map { |x, y| [ x, y.count ] }
+  max_bar = report.max_by { |name, count| count }.last
+  report_width = 18.0
+  name_format_string = "%-#{name_length}.#{name_length}s"
+  lenny_scale = (max_bar / report_width).round(2)
+  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count, report_width)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
 end
 
 def ascii_to_fullwidth s
