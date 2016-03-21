@@ -40,7 +40,7 @@ class BotLogic < Sinatra::Base
     # #YOLO dawg
     result = nil
     begin
-      Timeout.timeout(10) do
+      Timeout.timeout(30) do
         result = eval(code)
       end
     rescue SyntaxError => se
