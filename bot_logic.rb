@@ -163,7 +163,7 @@ def square_word s
 end
 
 def random_user
-  "Randomly-selected user who has run /lenny is: #{RunCommand.all.uniq { |x| x.user_id }.map(&:user_name).sample}"
+  "Randomly-selected user who has run /lenny is: #{RunCommand.all.to_a.uniq { |x| x.user_id }.map(&:user_name).sample}"
 end
 
 def user_privs user_id
