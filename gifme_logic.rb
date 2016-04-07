@@ -4,6 +4,8 @@
 require './chat'
 require './user_privs'
 
+GIFME_API_KEY = ENV['GIFME_API_KEY']
+
 class GifmeLogic
   def self.process(params)
     channel = params[:channel_id]
@@ -18,7 +20,7 @@ class GifmeLogic
     new_command.save
 
     # DO EXTERNAL REQUEST
-    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIF_ME_API_KEY}&nsfw=true&limit=20&query=#{query_string}")
+    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=true&limit=20&query=#{query_string}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     request = Net::HTTP::Post.new(uri)
