@@ -37,7 +37,7 @@ class LennyLogic
 
     if FAKE_RESPONSE
       puts "#{user_name} did a lenny."
-      break lenny
+      return lenny
     end
 
     Chat.new(channel).chat_out(lenny)
