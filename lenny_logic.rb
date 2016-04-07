@@ -27,6 +27,7 @@ class LennyLogic
       last_lenny = commands_by_user.last
       too_recent = last_lenny.created_at + 1.minute > Time.now
       puts "#{user_name} last ran it too recently!" if too_recent
+      puts "Should not lenny" if too_recent && !power_user
       return "Wait a bit, will ya?" if too_recent && !power_user
     end
 

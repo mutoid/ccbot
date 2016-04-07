@@ -52,7 +52,8 @@ class BotLogic < Sinatra::Base
     puts "Processing /lenny command"
     puts "Params: ", params
 
-    LennyLogic.process(params)
+    user_message = LennyLogic.process(params)
+    break user_message if user_message
   end
 
   run! if app_file == $0
