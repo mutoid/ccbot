@@ -25,7 +25,7 @@ class LennyLogic
 
     if commands_by_user.size > 0
       last_lenny = commands_by_user.last
-      break "Wait a bit, will ya?" if last_lenny.created_at + 1.minute > Time.now && !power_user
+      return "Wait a bit, will ya?" if last_lenny.created_at + 1.minute > Time.now && !power_user
     end
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
