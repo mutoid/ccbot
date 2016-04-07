@@ -25,7 +25,9 @@ class LennyLogic
 
     if commands_by_user.size > 0
       last_lenny = commands_by_user.last
-      return "Wait a bit, will ya?" if last_lenny.created_at + 1.minute > Time.now && !power_user
+      too_recent = last_lenny.created_at + 1.minute > Time.now
+      puts "#{user_name} last ran it too recently!" if too_recent
+      return "Wait a bit, will ya?" if too_recent && !power_user
     end
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
