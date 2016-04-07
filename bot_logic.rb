@@ -10,6 +10,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
 require './chat'
+require './user_privs'
 
 class RunCommand < ActiveRecord::Base
 end
