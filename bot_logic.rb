@@ -9,7 +9,6 @@ require 'timeout'
 require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
-require './gifme_logic'
 require './chat'
 
 class RunCommand < ActiveRecord::Base
