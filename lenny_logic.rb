@@ -34,7 +34,7 @@ class LennyLogic
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
-    lenny_count = RunCommand.where("created_at >= ?", Time.now - 10.seconds).count
+    lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", Time.now - 10.seconds).count
     lenny_index = [lenny_count - 1, LENNYS.count - 1].min
     lenny = LENNYS[lenny_index]
 
