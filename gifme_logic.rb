@@ -11,6 +11,7 @@ class GifmeLogic
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
     command_parts = params[:command].split(' ')
+    command = command_parts.first
     query_string = command_parts[1..-1].join '+'
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
