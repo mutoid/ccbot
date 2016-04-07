@@ -29,7 +29,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivs.user_privs(user_id)
+    power_user, admin_user = UserPrivilege.user_privs(user_id)
     return "You don't have permission to do this." if !admin_user
     code = params[:text]
 
@@ -58,7 +58,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivs.user_privs(user_id)
+    power_user, admin_user = UserPrivilege.user_privs(user_id)
     command_parts = params[:command].split(' ')
     command = command_parts.first
 
