@@ -13,8 +13,6 @@ class GifmeLogic
     command_parts = params[:command].split(' ')
     query_string = command_parts[1..-1].join '+'
 
-    puts "#{user_name} has run this command #{commands_by_user.size} times."
-
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
