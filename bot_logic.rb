@@ -11,6 +11,7 @@ require './environments'
 require './chat'
 require './user_privs'
 require './lenny_logic'
+require './gifme_logic'
 
 class RunCommand < ActiveRecord::Base
 end
@@ -19,6 +20,13 @@ class BotLogic < Sinatra::Base
   get('/') do
     puts "Processing get / request"
     "I'm up."
+  end
+
+  post('/gifme') do
+    puts "Evaluating Ruby code from the web, WCGW?"
+    puts "Params: ", params
+
+    GifmeLogic.process(params)
   end
 
   post('/ruby') do

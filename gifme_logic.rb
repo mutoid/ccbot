@@ -30,6 +30,8 @@ class GifmeLogic
     image_url = results[:data].sample()[:link]
 
     puts image_url
+
+    return image_url
   end
 end
 
