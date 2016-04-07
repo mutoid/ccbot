@@ -20,5 +20,6 @@ class Chat
       puts "WTF!"
       raise e
     end
+    nil
   end
 end
