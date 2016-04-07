@@ -117,7 +117,7 @@ def square_word s
 end
 
 def all_users
-  @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id }
+  @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id } }
 end
 
 def random_user
