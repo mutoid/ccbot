@@ -9,16 +9,12 @@ require 'timeout'
 require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
+require './gifme_logic'
+require './chat'
 
 class RunCommand < ActiveRecord::Base
 end
 
-class UserPrivilege < ActiveRecord::Base
-end
-
-SLACK_DOMAIN = ENV['SLACK_DOMAIN']
-SLACKBOT_ENDPOINT = ENV['SLACKBOT_ENDPOINT']
-SLACKBOT_TOKEN = ENV['SLACKBOT_TOKEN']
 FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
 class BotLogic < Sinatra::Base
@@ -33,7 +29,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = user_privs(user_id)
+    power_user, admin_user = UserPrivs.user_privs(user_id)
     return "You don't have permission to do this." if !admin_user
     code = params[:text]
 
@@ -50,8 +46,8 @@ class BotLogic < Sinatra::Base
     end
     output =  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
     output << "``` => #{result}```"
-    puts "Result is #{result}"
-    chat_out(output, channel)
+
+    Chat.new(channel).chat_out(output)
   end
 
   post('/lenny') do
@@ -62,7 +58,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = user_privs(user_id)
+    power_user, admin_user = UserPrivs.user_privs(user_id)
     command_parts = params[:command].split(' ')
     command = command_parts.first
 
@@ -83,7 +79,6 @@ class BotLogic < Sinatra::Base
     new_command.save
 
     lenny_count = RunCommand.where("created_at >= ?", Time.now - 10.seconds).count
-    puts "recent lenny count = #{lenny_count}"
     lenny_index = [lenny_count - 1, lennys.count - 1].min
     lenny = lennys[lenny_index]
 
@@ -92,28 +87,10 @@ class BotLogic < Sinatra::Base
       break lenny
     end
 
-    chat_out(lenny, channel)
+    Chat.new(channel).chat_out(lenny)
   end
 
   run! if app_file == $0
-end
-
-def chat_out(message, channel)
-  begin
-    uri = URI.parse("#{SLACK_DOMAIN}#{SLACKBOT_ENDPOINT}?token=#{SLACKBOT_TOKEN}&channel=#{channel}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Post.new(uri)
-    request.body = message
-      response = http.request(request)
-      
-      puts response
-      puts response.body
-  rescue StandardError => e
-    logger.info "Got exception #{e}"
-    puts "WTF!"
-    raise e
-  end
 end
 
 def count_to_lenny(count, report_width, max_bar)
@@ -134,7 +111,9 @@ def lenny_graph(report_width=12.0)
   max_bar = report.max_by { |name, count| count }.last
   name_format_string = "%-#{name_length}.#{name_length}s"
   lenny_scale = (max_bar / report_width).round(2)
-  report.sort_by(&:last).reverse!.map { |name, count| "#{name_format_string % name}|#{count_to_lenny(count, report_width, max_bar)}" }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
+  report.sort_by(&:last).reverse!.map { |name, count|
+    "#{name_format_string % name}|#{count_to_lenny(count, report_width, max_bar)}"
+  }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
 end
 
 def ascii_to_fullwidth s
@@ -164,10 +143,4 @@ end
 
 def random_user
   "Randomly-selected user who has run /lenny is: #{RunCommand.all.to_a.uniq { |x| x.user_id }.map(&:user_name).sample}"
-end
-
-def user_privs user_id
-  user = UserPrivilege.where(user_id: user_id).first
-  return [false, false] if !user
-  return [user.power_user, user.admin_user]
 end
