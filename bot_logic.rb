@@ -24,11 +24,16 @@ class BotLogic < Sinatra::Base
   post('/ruby') do
     puts "Evaluating Ruby code from the web, WCGW?"
     puts "Params: ", params
+
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
     return "You don't have permission to do this." if !admin_user
+
+    @current_channel = channel
+    @current_user_name = user_name
+    
     code = params[:text]
 
     # #YOLO dawg
@@ -97,6 +102,10 @@ def ascii_to_fullwidth s
   s.each_char.to_a.map { |c| wide_map[c.ord] || c.ord }.pack('U*')
 end
 
+def echo s
+  Chat.new(@current_channel).chat_out s
+end
+
 def cross_word s
   a = ascii_to_fullwidth(s.upcase).each_char.to_a
   "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
@@ -107,6 +116,10 @@ def square_word s
   "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
 end
 
+def all_users
+  @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id }
+end
+
 def random_user
-  "Randomly-selected user who has run /lenny is: #{RunCommand.all.to_a.uniq { |x| x.user_id }.map(&:user_name).sample}"
+  "Randomly-selected user who has run /lenny is: #{all_users.sample[:user_name]}"
 end
