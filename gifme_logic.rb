@@ -38,6 +38,7 @@ class GifmeLogic
     ###
 
     results = JSON.parse response.body
+    puts results["meta"]
     return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
 
     image_url = results["data"].sample()["link"]
