@@ -12,7 +12,7 @@ GIFME_API_KEY = ENV['GIFME_API_KEY']
 class GifmeLogic
   def html5_link(url)
     return url.sub(/\.gif$/, '.gifv') if url.include? 'imgur'
-    return url.gsub(/.*\.(gfycat.com\/.*)\.gif/, "#{$1}") if url.include? '.gfycat'
+    return url.sub(/.*\.(gfycat.com\/.*)\.gif/, "#{$1}") if url.include? '.gfycat'
     url
   end
 
@@ -21,10 +21,9 @@ class GifmeLogic
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
-    command_parts = params[:command].split(' ')
-    command = command_parts.first
-    terms = command_parts[1..-1]
-    query_string = terms.join '+'
+    command = params[:command]
+    terms = params[:text]
+    query_string = terms.gsub(' ','+')
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
@@ -45,4 +44,3 @@ class GifmeLogic
     Chat.new(channel).chat_out(html5_link image_url)
   end
 end
-
