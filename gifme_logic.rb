@@ -41,6 +41,6 @@ class GifmeLogic
     return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
 
     image_url = results["data"].sample()["link"]
-    Chat.new(channel).chat_out(html5_link image_url)
+    Chat.new(channel).chat_out("_#{user_name} searched gifme.io for '#{terms}':_\n#{html5_link image_url})
   end
 end
