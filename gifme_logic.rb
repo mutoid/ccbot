@@ -23,13 +23,14 @@ class GifmeLogic
     power_user, admin_user = UserPrivilege.user_privs(user_id)
     command_parts = params[:command].split(' ')
     command = command_parts.first
-    query_string = command_parts[1..-1].join '+'
+    terms = command_parts[1..-1]
+    query_string = terms.join '+'
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
     ### DO EXTERNAL REQUEST ###
-    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=false&limit=20&query=#{query_string}")
+    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=false&limit=10&query=#{query_string}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = false
     request = Net::HTTP::Get.new(uri)
@@ -37,8 +38,9 @@ class GifmeLogic
     ###
 
     results = JSON.parse response.body
-    image_url = results["data"].sample()["link"]
+    return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
 
+    image_url = results["data"].sample()["link"]
     Chat.new(channel).chat_out(html5_link image_url)
   end
 end
