@@ -1,6 +1,9 @@
 # coding: utf-8
 # -*- coding: utf-8 -*-
 
+require 'net/http'
+require 'uri'
+require 'json'
 require './chat'
 require './user_privs'
 
@@ -19,19 +22,18 @@ class GifmeLogic
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
-    # DO EXTERNAL REQUEST
-    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=true&limit=20&query=#{query_string}")
+    ### DO EXTERNAL REQUEST ###
+    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=false&limit=20&query=#{query_string}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = false
     request = Net::HTTP::Get.new(uri)
     response = http.request(request)
+    ###
 
-    results = JSON.parse response
-    image_url = results[:data].sample()[:link]
+    results = JSON.parse response.body
+    image_url = results["data"].sample()["link"]
 
-    puts image_url
-
-    return image_url
+    Chat.new(channel).chat_out(image_url)
   end
 end
 
