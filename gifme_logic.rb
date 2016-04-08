@@ -10,7 +10,7 @@ require './user_privs'
 GIFME_API_KEY = ENV['GIFME_API_KEY']
 
 class GifmeLogic
-  def html5_link(url)
+  def self.html5_link(url)
     return url.sub(/\.gif$/, '.gifv') if url.include? 'imgur'
     return url.sub(/.*\.(gfycat.com\/.*)\.gif/, "#{$1}") if url.include? '.gfycat'
     url
