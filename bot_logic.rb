@@ -23,7 +23,7 @@ class BotLogic < Sinatra::Base
   end
 
   post('/gifme') do
-    puts "Evaluating Ruby code from the web, WCGW?"
+    puts "Getting a random gif from gifme.io..."
     puts "Params: ", params
 
     GifmeLogic.process(params)
