@@ -29,7 +29,7 @@ class GifmeLogic
     new_command.save
 
     ### DO EXTERNAL REQUEST ###
-    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&nsfw=false&limit=10&query=#{query_string}")
+    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&sfw=true&limit=10&query=#{query_string}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = false
     request = Net::HTTP::Get.new(uri)
