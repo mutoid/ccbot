@@ -42,7 +42,7 @@ class GifmeLogic
     puts results
     puts results["meta"]
     results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
-    return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
+    return "No gifme.io results found for '#{terms}'" if results["data"].size == 0
 
     image_url = results["data"].first(10).sample()["link"]
     final_url = html5_link image_url
