@@ -25,7 +25,7 @@ class GifmeLogic
     command = params[:command]
     terms = params[:text]
     query_string = terms.gsub(' ','+')
-    sfw = channel_name.downcase.include? "nsfw"
+    sfw = !channel_name.downcase.include?('nsfw')
 
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
