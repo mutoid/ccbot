@@ -40,6 +40,7 @@ class GifmeLogic
     results = JSON.parse response.body
     puts results
     puts results["meta"]
+    results.reject! { |key, value| terms.all? { |tag| value['tags'].include?(tag.downcase) } }
     return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
 
     image_url = results["data"].sample()["link"]
@@ -49,6 +50,6 @@ class GifmeLogic
     print " => #{final_url}" if final_url != image_url
     print "\n"
 
-    Chat.new(channel).chat_out "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw:_\n#{final_url}"
+    Chat.new(channel).chat_out "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
   end
 end
