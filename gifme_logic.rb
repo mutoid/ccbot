@@ -18,6 +18,7 @@ class GifmeLogic
 
   def self.process(params)
     channel = params[:channel_id]
+    channel_name = params[:channel_name]
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
