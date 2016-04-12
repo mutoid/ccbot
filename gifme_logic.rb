@@ -41,10 +41,10 @@ class GifmeLogic
     results = JSON.parse response.body
     puts results
     puts results["meta"]
-    results.reject! { |key, value| terms.all? { |tag| value['tags'].include?(tag.downcase) } }
+    results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
     return "No gifme.io results found for '#{terms}'" if results["meta"]["total"] == 0
 
-    image_url = results["data"].sample()["link"]
+    image_url = results["data"].first(10).sample()["link"]
     final_url = html5_link image_url
 
     print image_url
