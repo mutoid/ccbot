@@ -41,7 +41,8 @@ class GifmeLogic
     results = JSON.parse response.body
 
     puts results["meta"]
-    results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
+    # results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
+    results['data'].keep_if { |result| result['score'] <= 10 }
     puts results
     return "No gifme.io results found for '#{terms}'" if results["data"].size == 0
 
