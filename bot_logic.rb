@@ -128,6 +128,10 @@ def all_users
   @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id } }
 end
 
+def random_username
+  all_users.sample[:user_name]
+end
+
 def random_user
-  "Randomly-selected user who has run /lenny is: #{all_users.sample[:user_name]}"
+  "Randomly-selected user who has run /lenny is: #{random_username}"
 end
