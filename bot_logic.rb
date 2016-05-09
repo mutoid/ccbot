@@ -114,6 +114,10 @@ def echo s
   Chat.new(@current_channel).chat_out s
 end
 
+def set_channel_topic topic
+  Chat.new(@current_channel).topic topic
+end
+
 def cross_word s
   a = ascii_to_fullwidth(s.upcase).each_char.to_a
   "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
