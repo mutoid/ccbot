@@ -132,6 +132,10 @@ def all_users
   @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id } }
 end
 
+def crown_ruotd
+  set_channel_topic("Congratulations to @#{random_username}, today's #random user of the day!")
+end
+
 def random_username
   all_users.sample[:user_name]
 end
