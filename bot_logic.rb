@@ -22,6 +22,12 @@ class BotLogic < Sinatra::Base
     "I'm up."
   end
 
+  post('/convert') do
+    puts "Doing a unit conversion..."
+    puts "Params: ", params
+    ConversionLogic.process(params)
+  end
+
   post('/gifme') do
     puts "Getting a random gif from gifme.io..."
     puts "Params: ", params
