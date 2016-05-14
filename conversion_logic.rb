@@ -36,7 +36,7 @@ class ConversionLogic
 
     begin
       result = do_logic(terms)
-    rescue e
+    rescue Exception => e
       return e.message
     end
 
