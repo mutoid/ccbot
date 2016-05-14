@@ -44,6 +44,7 @@ class ConversionLogic
   end
 
   def self.do_logic(terms)
+    terms = terms.tr("’”", "'\"")
     from, to = /(.+) to (.+)/.match(terms)[1..2]
     raise "Could not understand request." if (from == nil || to == nil)
 
