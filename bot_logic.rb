@@ -26,7 +26,8 @@ class BotLogic < Sinatra::Base
   post('/convert') do
     puts "Doing a unit conversion..."
     puts "Params: ", params
-    ConversionLogic.process(params)
+    result = ConversionLogic.process(params)
+    break result if result
   end
 
   post('/gifme') do
@@ -59,9 +60,9 @@ class BotLogic < Sinatra::Base
         result = eval(code)
       end
     rescue SyntaxError => se
-      return "There was a syntax error in #{code} #{se.message}"
+      break "There was a syntax error in #{code} #{se.message}"
     rescue StandardError => e
-      return "There was an error: #{e.message}"
+      break "There was an error: #{e.message}"
     end
     output =  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
     output << "``` => #{result}```"
