@@ -34,7 +34,11 @@ class ConversionLogic
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
-    result = do_logic(terms)
+    begin
+      result = do_logic(terms)
+    rescue e
+      return e.message
+    end
 
     Chat.new(channel).chat_out "_#{user_name} converted #{terms}_ => *#{result}*"
   end
@@ -43,17 +47,11 @@ class ConversionLogic
     from, to = /(.+) to (.+)/.match(terms)[1..2]
     raise "Could not understand request." if (from == nil || to == nil)
 
-    begin
-      from_unit = UNITS.select { |u| u.identify? from }[0]
-    rescue
-      raise "Unable to recognize FROM unit"
-    end
+    from_unit = UNITS.select { |u| u.identify? from }[0]
+    raise "Unable to recognize FROM unit" if !from_unit
 
-    begin
-      to_unit = UNITS.select { |u| u.to_identify? to }[0]
-    rescue
-      raise "Unable to recognize TO unit"
-    end
+    to_unit = UNITS.select { |u| u.to_identify? to }[0]
+    raise "Unable to recognize TO unit" if !to_unit
     
     convert(from, from_unit, to_unit)
   end
@@ -116,50 +114,50 @@ end
 
 class Meter < Unit
   @name_regex = "m(eters?)?"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Centimeter < Unit
   @name_regex = "(cm|centimeters?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Mile < Unit
-  @name_regex = "(miles?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @name_regex = "(mi(les)?)"
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Kilometer < Unit
   @name_regex = "(km|kilometers?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Inch < Unit
   @name_regex = "(in|\"|inch(es)?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Pound < Unit
   @name_regex = "(lbs?|#|pounds)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Kilogram < Unit
   @name_regex = "(kg|kilograms?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Fahrenheit < Unit
   @name_regex = "([Dd]egrees )?[Ff](ahrenheit)?"
-  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Celsius < Unit
   @name_regex = "([Dd]egrees )?[Cc](elsius|entigrade)?"
-  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius]
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 0.0833333,

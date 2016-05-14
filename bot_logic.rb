@@ -33,7 +33,8 @@ class BotLogic < Sinatra::Base
     puts "Getting a random gif from gifme.io..."
     puts "Params: ", params
 
-    GifmeLogic.process(params)
+    result = GifmeLogic.process(params)
+    break result if result
   end
 
   post('/ruby') do
@@ -44,7 +45,7 @@ class BotLogic < Sinatra::Base
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
-    return "You don't have permission to do this." if !admin_user
+    break "You don't have permission to do this." if !admin_user
 
     @current_channel = channel
     @current_user_name = user_name
