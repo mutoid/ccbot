@@ -77,7 +77,7 @@ class Unit
   end
 
   def self.to_identify?(str)
-    str =~ /\b#{name_regex}/
+    str =~ /\b#{name_regex}$/
   end
 
   def format
@@ -162,14 +162,15 @@ TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
            Kilometer => 0.0003048,
-           Centimeter => 30.48},
+           Centimeter => 30.48,
+           Mile => 0.000189393939},
   Meter => {Foot => 0.3048,
             Inch => 39.3701,
             Centimeter => 100,
             Kilometer => 0.001,
             Mile => 0.000621371},
   Centimeter => {Foot => 0.0328084,
-                 Meter => .01,
+                 Meter => 0.01,
                  Inch => 0.393701},
   Mile => {Kilometer => 1.60934,
            Foot => 5280,
