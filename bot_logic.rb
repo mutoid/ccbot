@@ -12,6 +12,7 @@ require './chat'
 require './user_privs'
 require './lenny_logic'
 require './gifme_logic'
+require './conversion_logic'
 
 class RunCommand < ActiveRecord::Base
 end
