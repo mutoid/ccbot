@@ -189,10 +189,10 @@ TABLE = {
            Meter => 0.0254},
   Pound => {Kilogram => 0.453592},
   Kilogram => {Pound => 2.20462},
-  Fahrenheit => { {Celsius => Proc.new { |f| (f - 32) * 5.0 / 9.0 } },
-                 {Kelvin => Proc.new { |f| (f + 459.67) * 5.0 / 9.0 } }},
-  Celsius => { {Fahrenheit => Proc.new { |c| (c * 9.0 / 5.0) + 32 } },
-               {Kelvin => Proc.new { |c| (c + 273.15) } } },
-  Kelvin => { {Celsius => Proc.new { |k| (k - 273.15) } },
-              {Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } }}
+  Fahrenheit => { Celsius => Proc.new { |f| (f - 32) * 5.0 / 9.0 },
+                 Kelvin => Proc.new { |f| (f + 459.67) * 5.0 / 9.0 }},
+  Celsius => { Fahrenheit => Proc.new { |c| (c * 9.0 / 5.0) + 32 },
+               Kelvin => Proc.new { |c| (c + 273.15) } },
+  Kelvin => { Celsius => Proc.new { |k| (k - 273.15) },
+              Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } }
 }
