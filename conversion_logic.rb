@@ -169,12 +169,12 @@ class Ounce < Unit
 end
 
 class Liter < Unit
-  @name_regex = "([Ll](iters)?)" #fuck British spelling
+  @name_regex = "([Ll](iters?)?)" #fuck British spelling
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Gallon < Unit
-  @name_regex = "([Gg]allons | [Gg]allon | [Gg]al )?" #horrible regex but I don't know a ton about ruby regex
+  @name_regex = "([Gg]al(lons?)?)"
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
