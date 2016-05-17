@@ -1,4 +1,6 @@
 # coding: utf-8
+
+# coding: utf-8
 # -*- coding: utf-8 -*-
 
 require './chat'
@@ -202,7 +204,7 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
-  Pound => {Kilogram => 0.453592
+  Pound => {Kilogram => 0.453592,
 	    Ounce => 16},
   Kilogram => {Pound => 2.20462,
 	       Ounce => 35.274},
