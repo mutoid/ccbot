@@ -163,7 +163,22 @@ class Kelvin < Unit
     @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin]
+class Ounce < Unit
+  @name_regex = "([Oo]z|[Oo]unce(s)?)"
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Liter < Unit
+  @name_regex = "([Ll](iters?)?)" #fuck British spelling
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Gallon < Unit
+  @name_regex = "([Gg]al(lons?)?)"
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
@@ -187,12 +202,18 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
-  Pound => {Kilogram => 0.453592},
-  Kilogram => {Pound => 2.20462},
+  Pound => {Kilogram => 0.453592
+	    Ounce => 16},
+  Kilogram => {Pound => 2.20462,
+	       Ounce => 35.274},
+  Ounce => {Pound => 0.0625,
+	    Kilogram => 0.0283495},
   Fahrenheit => { Celsius => Proc.new { |f| (f - 32) * 5.0 / 9.0 },
                  Kelvin => Proc.new { |f| (f + 459.67) * 5.0 / 9.0 }},
   Celsius => { Fahrenheit => Proc.new { |c| (c * 9.0 / 5.0) + 32 },
                Kelvin => Proc.new { |c| (c + 273.15) } },
   Kelvin => { Celsius => Proc.new { |k| (k - 273.15) },
-              Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } }
+              Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } },
+  Liter => {Gallon => 0.264172},
+  Gallon => {Liter => 3.78541}
 }
