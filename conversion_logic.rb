@@ -195,9 +195,17 @@ class Cup < Unit
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
+class Lightyear < Unit
+  @name_regex = "([Ll]ightyears? | [Ll][Yy]s?)" 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
 
+class Parsec < Unit
+  @name_regex = "([Pp]arsecs? | [Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup]
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
@@ -221,8 +229,10 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
-  Pound => {Kilogram => 0.453592
-			Ounce => 16},
+  Parsec => {LightYear => 0.306601}, #will add support for miles/kilometers once mutoid adds support for scientific notation
+  Lightyear => {Parsec => 3.26156},
+  Pound => {Kilogram => 0.453592,
+		Ounce => 16},
   Kilogram => {Pound => 2.20462,
 	       Ounce => 35.274},
   Ounce => {Pound => 0.0625,
