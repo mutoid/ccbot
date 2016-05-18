@@ -1,4 +1,6 @@
 # coding: utf-8
+
+# coding: utf-8
 # -*- coding: utf-8 -*-
 
 require './chat'
@@ -169,12 +171,12 @@ class Ounce < Unit
 end
 
 class Liter < Unit
-  @name_regex = "([Ll](iters)?)" #fuck British spelling
+  @name_regex = "([Ll](iters?)?)" #fuck British spelling
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Gallon < Unit
-  @name_regex = "([Gg]allons | [Gg]allon | [Gg]al )?" #horrible regex but I don't know a ton about ruby regex
+  @name_regex = "([Gg]al(lons?)?)"
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
@@ -202,7 +204,7 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
-  Pound => {Kilogram => 0.453592
+  Pound => {Kilogram => 0.453592,
 	    Ounce => 16},
   Kilogram => {Pound => 2.20462,
 	       Ounce => 35.274},
