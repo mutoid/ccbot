@@ -229,7 +229,7 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
-  Parsec => {LightYear => 0.306601}, #will add support for miles/kilometers once mutoid adds support for scientific notation
+  Parsec => {Lightyear => 0.306601}, #will add support for miles/kilometers once mutoid adds support for scientific notation
   Lightyear => {Parsec => 3.26156},
   Pound => {Kilogram => 0.453592,
 		Ounce => 16},
