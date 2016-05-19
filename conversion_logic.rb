@@ -180,7 +180,32 @@ class Gallon < Unit
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon]
+class Quart < Unit
+  @name_regex = "(([Qq]uart)s? | ([Qq]t)s?)" 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Pint < Unit
+  @name_regex = "(([Pp]int)s? | ([Pp]t)s?)" 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Cup < Unit
+  @name_regex = "([Cc]ups? | [Cc]opas?)" #Spanish is allowable
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Lightyear < Unit
+  @name_regex = "([Ll]ightyears? | [Ll][Yy]s?)" 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Parsec < Unit
+  @name_regex = "([Pp]arsecs? | [Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
@@ -204,8 +229,10 @@ TABLE = {
   Inch => {Foot => 0.083333,
            Centimeter => 2.54,
            Meter => 0.0254},
+  Parsec => {LightYear => 0.306601}, #will add support for miles/kilometers once mutoid adds support for scientific notation
+  Lightyear => {Parsec => 3.26156},
   Pound => {Kilogram => 0.453592,
-	    Ounce => 16},
+		Ounce => 16},
   Kilogram => {Pound => 2.20462,
 	       Ounce => 35.274},
   Ounce => {Pound => 0.0625,
@@ -216,6 +243,24 @@ TABLE = {
                Kelvin => Proc.new { |c| (c + 273.15) } },
   Kelvin => { Celsius => Proc.new { |k| (k - 273.15) },
               Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } },
-  Liter => {Gallon => 0.264172},
-  Gallon => {Liter => 3.78541}
+  Liter => {Gallon => 0.264172,
+	    Quart => 1.05669,
+	    Pint => 2.11338,
+	    Cup => 4.22675},
+  Gallon => {Liter => 3.78541,
+	     Quart => 4,
+	     Pint => 8,
+	     Cup => 16},
+  Quart => {Liter => 0.946353,
+	    Gallon => 0.25,
+	    Pint => 2,
+	    Cup => 4},			
+  Pint => {Liter => 0.473176,
+  	   Gallon => 0.125,
+	   Quart => 0.5,
+	   Cup => 2},		
+  Cup => {Liter => 0.236588,
+	  Gallon => 0.0624,
+	  Quart => 0.25,
+	  Pint => 0.5}
 }
