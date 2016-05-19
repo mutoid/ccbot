@@ -181,27 +181,27 @@ class Gallon < Unit
 end
 
 class Quart < Unit
-  @name_regex = "(([Qq]uart)s? | ([Qq]t)s?)" 
+  @name_regex = "(([Qq]uart)s?|([Qq]t)s?)" 
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Pint < Unit
-  @name_regex = "(([Pp]int)s? | ([Pp]t)s?)" 
+  @name_regex = "(([Pp]int)s?|([Pp]t)s?)" 
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Cup < Unit
-  @name_regex = "([Cc]ups? | [Cc]opas?)" #Spanish is allowable
+  @name_regex = "([Cc]ups?|[Cc]opas?)" #Spanish is allowable
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Lightyear < Unit
-  @name_regex = "([Ll]ightyears? | [Ll][Yy]s?)" 
+  @name_regex = "([Ll]ightyears?|[Ll][Yy]s?)" 
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
 class Parsec < Unit
-  @name_regex = "([Pp]arsecs? | [Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
+  @name_regex = "([Pp]arsecs?|[Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
