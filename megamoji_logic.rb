@@ -19,7 +19,7 @@ class MegamojiLogic
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
     terms = params[:text]
-    command = command_parts.first
+    command = params[:command]
     base_name = terms.match(/w+/)[0]
     
     commands_by_user = RunCommand.where user_id: user_id, command: command
