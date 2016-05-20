@@ -4,7 +4,7 @@ require 'sinatra/activerecord'
 # Columns: base_name, width, count
 
 class Megamoji < ActiveRecord::Base
-  def self.megamoji 
+  def self.megamoji(base_name)
     emoji = Megamoji.where(base_name: base_name).first
     return nil if emoji.nil?
     return emoji
