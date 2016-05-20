@@ -38,6 +38,9 @@ class MegamojiLogic
 
     out_string = [*(1..emoji.count)].each_slice(emoji.width).map { |a|  a.map { |n| ":#{base_name}#{n}:" }.join }.join "\n"
 
+    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command.save
+
     if FAKE_RESPONSE
       puts "#{user_name} did megamoji #{param}."
       return out_string
