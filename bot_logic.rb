@@ -56,8 +56,8 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    #power_user, admin_user = UserPrivilege.user_privs(user_id)
-    #break "You don't have permission to do this." if !admin_user
+    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    break "You don't have permission to do this." if !admin_user
 
     @current_channel = channel
     @current_user_name = user_name
