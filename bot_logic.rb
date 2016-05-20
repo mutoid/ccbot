@@ -38,6 +38,15 @@ class BotLogic < Sinatra::Base
     break result if result
   end
 
+  post('/megamoji') do
+    puts "Constructing a large rectangular emoji..."
+    puts "Parmas: ", params
+
+    result = MegamojiLogic.process(params)
+
+    break result if result
+  end
+
   post('/ruby') do
     puts "Evaluating Ruby code from the web, WCGW?"
     puts "Params: ", params
