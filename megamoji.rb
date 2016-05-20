@@ -12,6 +12,7 @@ class Megamoji < ActiveRecord::Base
 
   def self.create_or_update(base_name, width, count)
     emoji = Megamoji.where(base_name: base_name).first || Megamoji.new
+    emoji.base_name = base_name
     emoji.width = width
     emoji.count = count
     emoji.save!
