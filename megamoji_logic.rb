@@ -20,7 +20,7 @@ class MegamojiLogic
     power_user, admin_user = UserPrivilege.user_privs(user_id)
     terms = params[:text]
     command = params[:command]
-    base_name = terms.match(/w+/)[0]
+    base_name = terms.match(/\w+/)[0] rescue return "You need to specify an emoji, dummy!"
     
     commands_by_user = RunCommand.where user_id: user_id, command: command
   
