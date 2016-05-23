@@ -10,9 +10,11 @@ require 'sinatra/activerecord'
 require './environments'
 require './chat'
 require './user_privs'
+require './megamoji'
 require './lenny_logic'
 require './gifme_logic'
 require './conversion_logic'
+require './megamoji_logic'
 
 class RunCommand < ActiveRecord::Base
 end
@@ -35,6 +37,15 @@ class BotLogic < Sinatra::Base
     puts "Params: ", params
 
     result = GifmeLogic.process(params)
+    break result if result
+  end
+
+  post('/megamoji') do
+    puts "Constructing a large rectangular emoji..."
+    puts "Parmas: ", params
+
+    result = MegamojiLogic.process(params)
+
     break result if result
   end
 
