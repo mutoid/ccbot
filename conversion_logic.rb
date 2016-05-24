@@ -205,7 +205,17 @@ class Parsec < Unit
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
+class Brody < Unit
+  @name_regex = "([Bb]rody|[Bb]rodes?)" #cuz uni asked
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+class Christianity < Unit
+  @name_regex = "([Cc]hristian(ity)?)" #cuz uni asked
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec, Brody, Christianity]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
@@ -262,5 +272,7 @@ TABLE = {
   Cup => {Liter => 0.236588,
 	  Gallon => 0.0624,
 	  Quart => 0.25,
-	  Pint => 0.5}
+	  Pint => 0.5},
+  Brody => {Christianity => 666},
+  Christianity => {Brody => 69}
 }
