@@ -206,7 +206,7 @@ class Parsec < Unit
 end
 
 class Yard < Unit
-  @name_regex = "([Yy]ards?|[Yy]ds?)" #FuckGeorgeLucas Parsec is a unit of distance 
+  @name_regex = "([Yy]ards?|[Yy]ds?)" #for football approximations 
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
