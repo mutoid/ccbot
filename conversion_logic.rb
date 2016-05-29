@@ -212,7 +212,7 @@ TABLE = {
            Kilometer => 0.0003048,
            Centimeter => 30.48,
            Mile => 0.000189393939},
-  Meter => {Foot => 0.3048,
+  Meter => {Foot => 3.28084,
             Inch => 39.3701,
             Centimeter => 100,
             Kilometer => 0.001,
