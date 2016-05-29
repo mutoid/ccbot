@@ -205,18 +205,28 @@ class Parsec < Unit
   @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
+class Yard < Unit
+  @name_regex = "([Yy]ards?|[Yy]ds?)" #for football approximations 
+  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+end
+
+
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec, Yard]
 TABLE = {
   Foot => {Meter => 0.3048,
            Inch => 12,
            Kilometer => 0.0003048,
            Centimeter => 30.48,
-           Mile => 0.000189393939},
+           Mile => 0.000189393939,
+           Yard => 0.3333},
   Meter => {Foot => 3.28084,
             Inch => 39.3701,
             Centimeter => 100,
             Kilometer => 0.001,
-            Mile => 0.000621371},
+            Mile => 0.000621371,
+            Yard => 1.09361},
+  Yard => {Meter => 0.9144,
+           Feet => 3},
   Centimeter => {Foot => 0.0328084,
                  Meter => 0.01,
                  Inch => 0.393701},
