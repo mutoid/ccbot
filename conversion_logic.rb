@@ -1,11 +1,9 @@
 # coding: utf-8
-
-# coding: utf-8
 # -*- coding: utf-8 -*-
 
 require './chat'
-require './user_privs'
 require './unit_mixin'
+require 'bigdecimal'
 
 class ConversionLogic
   def self.convert(from, from_unit, to_unit)
@@ -29,7 +27,6 @@ class ConversionLogic
     channel_name = params[:channel_name]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
     command = params[:command]
     terms = params[:text]
 
@@ -69,7 +66,9 @@ class Unit
   @name_regex = ""
   
   def initialize(val)
-    @value = if (val.is_a? Float)
+    @value = if val.is_a? Float
+               BigDecimal.new(val, 10)
+             elsif val.is_a? BigDecimal
                val
              else
                parse(val)
@@ -85,13 +84,13 @@ class Unit
   end
 
   def format
-    "%.3f" % value
+    "%0.5g" % value
   end
 
   private
   
   def parse(val)
-    self.class.formats.select { |f| val =~ f }.first.match(val)[1].to_f
+    BigDecimal.new(self.class.formats.select { |f| val =~ f }.first.match(val)[1])
   end
 end
 
@@ -100,10 +99,10 @@ class Foot < Unit
   @formats = [/(\d+)'\s*(#{FLOAT_REGEX})"/, /(#{FLOAT_REGEX})\s*#{name_regex}/]
 
   def parse(val)
-    if (match_data = self.class.formats[0].match(val))
-      return match_data[1].to_f + match_data[2].to_f / 12.0
-    elsif (match_data = self.class.formats[1].match(val))
-      return match_data[1].to_f
+    if match_data = self.class.formats[0].match(val)
+      return BigDecimal.new(match_data[1]) + BigDecimal.new(match_data[2]) / 12.0
+    elsif match_data = self.class.formats[1].match(val)
+      return BigDecimal.new match_data[1]
     end
   end
 
