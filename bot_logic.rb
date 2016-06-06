@@ -76,7 +76,7 @@ class BotLogic < Sinatra::Base
       break "There was an error: #{e.message}"
     end
     output =  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
-    output << "``` => #{result}```"
+    output << "``` => #{result}```" if !result.nil?
 
     Chat.new(channel).chat_out(output)
   end
