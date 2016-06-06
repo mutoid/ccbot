@@ -196,7 +196,7 @@ class Cup < Unit
 end
 
 class Lightyear < Unit
-  @name_regex = "([Ll]ightyears?|[Ll][Yy]s?)" 
+  @name_regex = "([Ll]ight ?years?|[Ll][Yy]s?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
