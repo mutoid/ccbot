@@ -64,6 +64,7 @@ class Unit
   include ClassLevelInheritableAttributes
   attr_accessor :value
   inheritable_attributes :formats, :name_regex
+  FLOAT_REGEX = '(\d*\.)?\d+'
   @formats = []
   @name_regex = ""
   
@@ -96,7 +97,7 @@ end
 
 class Foot < Unit
   @name_regex = "f(ee|oo)?t"
-  @formats = [/(\d+)'\s*(\d+(\.\d+)?)"/, /(\d+(\.\d+)?)\s*#{name_regex}/]
+  @formats = [/(\d+)'\s*(#{FLOAT_REGEX})"/, /(#{FLOAT_REGEX})\s*#{name_regex}/]
 
   def parse(val)
     if (match_data = self.class.formats[0].match(val))
@@ -117,92 +118,92 @@ end
 
 class Meter < Unit
   @name_regex = "m(eters?)?"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Centimeter < Unit
   @name_regex = "(cm|centimeters?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Mile < Unit
   @name_regex = "(mi(les)?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Kilometer < Unit
   @name_regex = "(km|kilometers?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Inch < Unit
   @name_regex = "(in|\"|inch(es)?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Pound < Unit
   @name_regex = "(lbs?|#|pounds)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Kilogram < Unit
   @name_regex = "(kg|kilograms?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Fahrenheit < Unit
   @name_regex = "([Dd]egrees )?[Ff](ahrenheit)?"
-  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Celsius < Unit
   @name_regex = "([Dd]egrees )?[Cc](elsius|entigrade)?"
-  @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Kelvin < Unit
     @name_regex = "K(elvin)?"
-    @formats = [/(-?\d+(\.\d+)?)\s*#{name_regex}$/]
+    @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Ounce < Unit
   @name_regex = "([Oo]z|[Oo]unce(s)?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Liter < Unit
   @name_regex = "([Ll](iters?)?)" #fuck British spelling
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Gallon < Unit
   @name_regex = "([Gg]al(lons?)?)"
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Quart < Unit
   @name_regex = "(([Qq]uart)s?|([Qq]t)s?)" 
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Pint < Unit
   @name_regex = "(([Pp]int)s?|([Pp]t)s?)" 
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Cup < Unit
   @name_regex = "([Cc]ups?|[Cc]opas?)" #Spanish is allowable
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Lightyear < Unit
   @name_regex = "([Ll]ightyears?|[Ll][Yy]s?)" 
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 class Parsec < Unit
   @name_regex = "([Pp]arsecs?|[Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
-  @formats = [/(\d+(\.\d+)?)\s*#{name_regex}$/]
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
 UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
