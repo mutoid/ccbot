@@ -4,22 +4,31 @@
 require './chat'
 require './unit_mixin'
 require 'bigdecimal'
+require 'set'
 
 class ConversionLogic
   def self.convert(from, from_unit, to_unit)
     f = from_unit.new(from)
-    rules = TABLE[from_unit]
-    if (!rules)
-      raise "Can't find a conversion rule for #{from_unit}!"
-    end
-    conversion = rules[to_unit]
-    raise "Don't know how to convert from #{from_unit} to #{to_unit}!" if !conversion
-    value = if conversion.is_a? Proc
-              conversion.call(f.value)
-            else
-              f.value * conversion
-            end
-    to_unit.new(value).format
+
+    raise "Don't know how to convert from #{from_unit} to #{to_unit}!" if !compatible?(from_unit, to_unit)
+
+    table = table(from_unit, to_unit)
+    middle_conversion = table.select { |u, _| u == from_unit }.first
+    final_conversion = table.select { |u, _| u == to_unit }.first
+    middle_unit = table[0][0]
+
+    mid_value = if middle_conversion[1].is_a? Proc
+                  middle_conversion[2].call(f.value)
+                else
+                  f.value / middle_conversion[1]
+                end
+
+    final_value = if final_conversion[1].is_a? Proc
+                    final_conversion[1].call(mid_value)
+                  else
+                    mid_value * final_conversion[1]
+                  end
+    to_unit.new(final_value).format
   end
   
   def self.process(params)
@@ -206,71 +215,37 @@ class Parsec < Unit
 end
 
 UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
-TABLE = {
-  Foot => {Meter => 0.3048,
-           Inch => 12,
-           Kilometer => 0.0003048,
-           Centimeter => 30.48,
-           Mile => 0.000189393939},
-  Meter => {Foot => 3.28084,
-            Inch => 39.3701,
-            Centimeter => 100,
-            Kilometer => 0.001,
-            Mile => 0.000621371},
-  Centimeter => {Foot => 0.0328084,
-                 Meter => 0.01,
-                 Inch => 0.393701},
-  Mile => {Kilometer => 1.60934,
-           Foot => 5280,
-           Meter => 1609.34,
-           Lightyear => 1.7011e-13,
-           Parsec => 5.21553e-14},
-  Kilometer => {Mile => 0.621371,
-                Foot => 3280.84,
-                Meter => 1000.0,
-                Lightyear => 1.057e-13,
-                Parsec => 3.2408e-14},
-  Inch => {Foot => 0.083333,
-           Centimeter => 2.54,
-           Meter => 0.0254},
-  Parsec => {Lightyear => 0.306601,
-             Meter => 3.086e+16,
-             Kilometer => 3.086e+13,
-             Mile => 1.917e+13},
-  Lightyear => {Parsec => 3.26156,
-                Meter => 9.461e+15,
-                Kilometer => 9.461e+12,
-                Mile => 5.879e+12},
-  Pound => {Kilogram => 0.453592,
-		Ounce => 16},
-  Kilogram => {Pound => 2.20462,
-	       Ounce => 35.274},
-  Ounce => {Pound => 0.0625,
-	    Kilogram => 0.0283495},
-  Fahrenheit => { Celsius => Proc.new { |f| (f - 32) * 5.0 / 9.0 },
-                 Kelvin => Proc.new { |f| (f + 459.67) * 5.0 / 9.0 }},
-  Celsius => { Fahrenheit => Proc.new { |c| (c * 9.0 / 5.0) + 32 },
-               Kelvin => Proc.new { |c| (c + 273.15) } },
-  Kelvin => { Celsius => Proc.new { |k| (k - 273.15) },
-              Fahrenheit => Proc.new { |k| (k * 9.0 / 5.0) - 459.67 } },
-  Liter => {Gallon => 0.264172,
-	    Quart => 1.05669,
-	    Pint => 2.11338,
-	    Cup => 4.22675},
-  Gallon => {Liter => 3.78541,
-	     Quart => 4,
-	     Pint => 8,
-	     Cup => 16},
-  Quart => {Liter => 0.946353,
-	    Gallon => 0.25,
-	    Pint => 2,
-	    Cup => 4},			
-  Pint => {Liter => 0.473176,
-  	   Gallon => 0.125,
-	   Quart => 0.5,
-	   Cup => 2},		
-  Cup => {Liter => 0.236588,
-	  Gallon => 0.0624,
-	  Quart => 0.25,
-	  Pint => 0.5}
-}
+
+# First unit is the "master unit" by which all units are calculated to and from.
+# Value in the second part of the tuple is what you have to multiply by to get
+# from the "master unit" to the unit in question.
+LENGTH_UNITS = [[Meter, 1.0],
+                [Foot, 3.28084],
+                [Centimeter, 100],
+                [Mile, 0.000621371],
+                [Kilometer, 0.001],
+                [Inch, 39.3701],
+                [Lightyear, 1.057e-16],
+                [Parsec, 3.2408e-17]]
+WEIGHT_UNITS = [[Kilogram, 1.0],
+                [Pound, 2.20462],
+                [Ounce, 35.274]]
+VOLUME_UNITS = [[Liter, 1.0],
+                [Ounce, 33.814],
+                [Gallon, 0.264172],
+                [Quart, 1.05669],
+                [Pint, 2.11338],
+                [Cup, 16]]
+TEMPERATURE_UNITS = [[Celsius, 1.0],
+                     [Fahrenheit, Proc.new { |c| (c * 9.0 / 5.0) + 32 }, Proc.new { |f| (f - 32) * 5.0 / 9.0 }],
+                     [Kelvin, Proc.new { |c| (c + 273.15) },  Proc.new { |k| (k - 273.15) } ]]
+
+def compatible?(from, to)
+  !table(from, to).nil?
+end
+
+def table(from, to)
+  [LENGTH_UNITS, WEIGHT_UNITS, VOLUME_UNITS, TEMPERATURE_UNITS].select { |list|
+    list.map(&:first).to_set & [from, to] == [from, to].to_set
+  }.first
+end
