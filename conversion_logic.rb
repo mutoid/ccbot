@@ -214,7 +214,12 @@ class Parsec < Unit
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
 end
 
-UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec]
+class Yard < Unit
+  @name_regex = "([Yy]ards?|[Yy]ds?)" #Imperial4lyfe
+  @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+end
+
+UNITS = [Foot, Meter, Centimeter, Mile, Kilometer, Inch, Pound, Kilogram, Fahrenheit, Celsius, Kelvin, Ounce, Liter, Gallon, Quart, Pint, Cup, Lightyear, Parsec, Yard]
 
 # First unit is the "master unit" by which all units are calculated to and from.
 # Value in the second part of the tuple is what you have to multiply by to get
@@ -226,7 +231,8 @@ LENGTH_UNITS = [[Meter, 1.0],
                 [Kilometer, 0.001],
                 [Inch, 39.3701],
                 [Lightyear, 1.057e-16],
-                [Parsec, 3.2408e-17]]
+                [Parsec, 3.2408e-17],
+                [Yard, 1.09361]]
 WEIGHT_UNITS = [[Kilogram, 1.0],
                 [Pound, 2.20462],
                 [Ounce, 35.274]]
