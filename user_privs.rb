@@ -7,7 +7,7 @@ class UserPrivilege < ActiveRecord::Base
     return [false, false] if !user && new_values.empty?
     
     if !user
-      user = UserPrivs.new
+      user = UserPrivilege.new
       user.user_id = user_id
     end
     
