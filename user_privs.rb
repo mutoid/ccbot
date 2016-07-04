@@ -6,6 +6,11 @@ class UserPrivilege < ActiveRecord::Base
     user = UserPrivilege.where(user_id: user_id).first
     return [false, false] if !user && new_values.empty?
     
+    if !user
+      user = UserPrivs.new
+      user.user_id = user_id
+    end
+    
     if !new_values.empty?
       user.power_user = new_values[:power_user] if new_values[:power_user]
       user.admin_user = new_values[:admin_user] if new_values[:admin_user]
