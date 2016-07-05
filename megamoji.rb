@@ -7,7 +7,7 @@ class Megamoji < ActiveRecord::Base
   def self.megamoji(base_name)
     emoji = Megamoji.where(base_name: base_name).first
     return nil if emoji.nil?
-    return emoji
+    return emoji.downcase
   end
 
   def self.create_or_update(base_name, width, count)
