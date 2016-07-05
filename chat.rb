@@ -14,7 +14,7 @@ class Chat
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       request = Net::HTTP::Post.new(uri)
-      request.body = message
+      request.body = message.to_s
       response = http.request(request)
     rescue StandardError => e
       puts "WTF!"
