@@ -17,7 +17,6 @@ class Chat
       request.body = message
       response = http.request(request)
     rescue StandardError => e
-      logger.info "Got exception #{e}"
       puts "WTF!"
       raise e
     end
@@ -42,7 +41,6 @@ class Chat
       request.set_form_data(params)
       response = http.request(request)
     rescue StandardError => e
-      # logger.info "Got exception #{e}"
       puts "WTF!"
       raise e
     end
