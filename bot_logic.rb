@@ -111,7 +111,7 @@ def lenny_graph(report_width=12.0)
   name_format_string = "%-#{name_length}.#{name_length}s"
   lenny_scale = (max_bar / report_width).round(2)
   report.sort_by(&:last).reverse!.map { |name, count|
-    "#{name_format_string % name}|#{count_to_lenny(count, report_width, max_bar)}"
+    "#{name_format_string % (name[0] + '*' + name[2..-1])}|#{count_to_lenny(count, report_width, max_bar)}"
   }.unshift("THE LENNY GRAPH: ( ͡° ͜ʖ ͡°) = #{lenny_scale} runs of the /lenny command" + "\n").join("\n")
 end
 
