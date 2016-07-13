@@ -163,3 +163,7 @@ end
 def random_user
   "Randomly-selected user who has run /lenny is: #{random_username}"
 end
+
+def emoji_word word
+    word.gsub /(\w)/, ":\1\1:"
+end
