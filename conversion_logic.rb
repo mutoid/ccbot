@@ -119,8 +119,15 @@ class Foot < Unit
     return super if value < 1 || value > 10
     fraction = value.modulo(1)
     feet = (value - fraction).round(0)
-    inches = (fraction * 12).round(0)
-    "#{feet}'#{inches}\""
+    inches = (fraction * 12)
+    inch_fraction = inches.modulo(1)
+    inches = inches.round(0)
+    inch_fraction = Rational(inch_fraction - inch_fraction.modulo(Rational('1/16')))
+    if (inch_fraction > 0)
+      "#{feet}' #{inches} #{inch_fraction}\""
+    else
+      "#{feet}'#{inches}\""
+    end
   end
 end
 
