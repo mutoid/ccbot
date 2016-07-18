@@ -165,5 +165,5 @@ def random_user
 end
 
 def emoji_word word
-    word.gsub /(\w)/, ":\1\1:"
+    word.gsub /(\w)/, ':\1\1:'
 end
