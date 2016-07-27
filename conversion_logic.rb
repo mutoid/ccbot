@@ -69,10 +69,11 @@ end
 class Unit
   include ClassLevelInheritableAttributes
   attr_accessor :value
-  inheritable_attributes :formats, :name_regex
+  inheritable_attributes :formats, :name_regex, :output_unit_label
   FLOAT_REGEX = '(\d*\.)?\d+'
   @formats = []
   @name_regex = ""
+  @output_unit_label = ""
   
   def initialize(val)
     @value = if val.is_a? Float
@@ -93,7 +94,7 @@ class Unit
   end
 
   def format
-    "%0.5g" % value
+    "%0.5g #{self.class.output_unit_label}" % value
   end
 
   private
@@ -106,6 +107,7 @@ end
 class Foot < Unit
   @name_regex = "f(ee|oo)?t"
   @formats = [/(\d+)'\s*(#{FLOAT_REGEX})"/, /(#{FLOAT_REGEX})\s*#{name_regex}/]
+  @output_unit_label = 'ft'
 
   def parse(val)
     if match_data = self.class.formats[0].match(val)
@@ -134,91 +136,117 @@ end
 class Meter < Unit
   @name_regex = "m(eters?)?"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'm'
 end
 
 class Centimeter < Unit
   @name_regex = "(cm|centimeters?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'cm'
 end
 
 class Mile < Unit
   @name_regex = "(mi(les)?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'miles'
 end
 
 class Kilometer < Unit
   @name_regex = "(km|kilometers?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'km'
 end
 
 class Inch < Unit
   @name_regex = "(in|\"|inch(es)?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'in'
 end
 
 class Pound < Unit
   @name_regex = "(lbs?|#|pounds)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'lbs'
 end
 
 class Kilogram < Unit
   @name_regex = "(kg|kilograms?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'kg'
 end
 
 class Fahrenheit < Unit
   @name_regex = "([Dd]egrees )?[Ff](ahrenheit)?"
   @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = '°F'
+
+  def format
+    "%0.5g#{self.class.output_unit_label}" % value
+  end
 end
 
 class Celsius < Unit
   @name_regex = "([Dd]egrees )?[Cc](elsius|entigrade)?"
   @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = '°C'
+
+  def format
+    "%0.5g#{self.class.output_unit_label}" % value
+  end
 end
 
 class Kelvin < Unit
-    @name_regex = "K(elvin)?"
-    @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @name_regex = "K(elvin)?"
+  @formats = [/(-?#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'K'
 end
 
 class Ounce < Unit
   @name_regex = "([Oo]z|[Oo]unce(s)?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'oz'
 end
 
 class Liter < Unit
   @name_regex = "([Ll](iters?)?)" #fuck British spelling
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'l'
 end
 
 class Gallon < Unit
   @name_regex = "([Gg]al(lons?)?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'gallons'
 end
 
 class Quart < Unit
   @name_regex = "(([Qq]uart)s?|([Qq]t)s?)" 
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'qts'
 end
 
 class Pint < Unit
   @name_regex = "(([Pp]int)s?|([Pp]t)s?)" 
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'pts'
 end
 
 class Cup < Unit
   @name_regex = "([Cc]ups?|[Cc]opas?)" #Spanish is allowable
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'cups'
 end
 
 class Lightyear < Unit
   @name_regex = "([Ll]ight ?years?|[Ll][Yy]s?)"
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'ly'
 end
 
 class Parsec < Unit
   @name_regex = "([Pp]arsecs?|[Pp]cs?)" #FuckGeorgeLucas Parsec is a unit of distance 
   @formats = [/(#{FLOAT_REGEX})\s*#{name_regex}$/]
+  @output_unit_label = 'pc'
 end
 
 class Yard < Unit
