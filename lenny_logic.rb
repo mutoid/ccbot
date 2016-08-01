@@ -14,8 +14,8 @@ class LennyLogic
 
    HALLOWEEN_LENNYS = ["(◔ д◔) ｓｐｏｏｋｅｄ！",
                        "ᕕ༼ •́ Д •̀ ༽ᕗ 𝓢𝓤𝓟𝓔𝓡 𝓢𝓟𝓞𝓞𝓚𝓔𝓓!",
-                       ":doot: ᕦ⊙෴⊙ᕤ :doot: 𝕊ℙ𝕆𝕆𝕂𝕐 𝔻𝕆𝕆𝕋𝕊!",
-                       "/╲/( ͡° ͡° ͜ʖ ͡° ͡°)/\╱\ That's enough spookin'"]
+                       "ᕦ⊙෴⊙ᕤ :doot: 𝕊ℙ𝕆𝕆𝕂𝕐 𝔻𝕆𝕆𝕋𝕊! :doot:",
+                       "/╲/( ͡° ͡° ͜ʖ ͡° ͡°)/\\╱\\ That's enough spookin'"]
 
   def self.process(params)
     channel = params[:channel_id]
@@ -42,7 +42,7 @@ class LennyLogic
     lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", Time.now - 10.seconds).count
     lenny_index = [lenny_count - 1, LENNYS.count - 1].min
     today = Date.today
-    lennies = if true || today.month == 10 && today.day > 15
+    lennies = if today.month == 10 && today.day > 15
                 HALLOWEEN_LENNYS
               else
                 LENNYS
