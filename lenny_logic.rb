@@ -47,7 +47,7 @@ class LennyLogic
               else
                 LENNYS
               end
-    lenny = LENNYS[lenny_index]
+    lenny = lennies[lenny_index]
 
     if FAKE_RESPONSE
       puts "#{user_name} did a lenny."
