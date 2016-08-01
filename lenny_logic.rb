@@ -42,7 +42,7 @@ class LennyLogic
     lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", Time.now - 10.seconds).count
     lenny_index = [lenny_count - 1, LENNYS.count - 1].min
     today = Date.today
-    lennies = if today.month == 10 && today.day > 15
+    lennies = if true || today.month == 10 && today.day > 15
                 HALLOWEEN_LENNYS
               else
                 LENNYS
