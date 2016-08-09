@@ -169,8 +169,10 @@ def square_word s
 end
 
 def all_users(filter = {})
+  @all_users ||= {}
+
   if filter.count == 0
-    return @all_users ||= query_result_to_user_list(RunCommand.all)
+    return @all_users['all'] ||= query_result_to_user_list(RunCommand.all)
   end
 
   condition_sql = ' 1 = 1 '
@@ -186,11 +188,11 @@ def all_users(filter = {})
     params << "%#{filter[:command]}%"
   end
 
-  query_result_to_user_list(RunCommand.where(condition_sql, params))
+  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, params))
 end
 
 def query_result_to_user_list(result)
-  return result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
+  result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
 end
 
 def crown_ruotd
