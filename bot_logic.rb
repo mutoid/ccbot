@@ -26,6 +26,10 @@ class User
     @user_name = user_name
     @user_id = user_id
   end
+
+  def ==(other)
+    self.user_id == other.user_id
+  end
 end
 
 class BotLogic < Sinatra::Base
@@ -179,7 +183,7 @@ def all_users(filter = {})
 end
 
 def query_result_to_user_list(result)
-  return result.to_a.uniq { |c| c.user_id }.map { |c| User.new(c.user_name, c.user_id) }
+  return result.to_a.uniq.map { |c| User.new(c.user_name, c.user_id) }
 end
 
 def crown_ruotd
