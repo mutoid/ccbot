@@ -23,12 +23,11 @@ class User
   attr_accessor :user_name, :user_id
 
   def initialize(user_name, user_id)
-    @user_name = user_name
-    @user_id = user_id
+    @user_name, @user_id = user_name, user_id
   end
 
   def ==(other)
-    self.user_id == other.user_id
+    user_id == other.user_id
   end
 
   def eql?(other)
@@ -191,7 +190,7 @@ def all_users(filter = {})
 end
 
 def query_result_to_user_list(result)
-  return result.to_a.uniq.map { |c| User.new(c.user_name, c.user_id) }
+  return result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
 end
 
 def crown_ruotd
