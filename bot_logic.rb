@@ -19,6 +19,10 @@ require './megamoji_logic'
 class RunCommand < ActiveRecord::Base
 end
 
+class User
+  attr_accessor :user_name, :user_id
+end
+
 class BotLogic < Sinatra::Base
   get('/') do
     puts "Processing get / request"
@@ -148,16 +152,41 @@ def square_word s
   "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
 end
 
-def all_users
-  @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id } }
+def all_users(filter = {})
+  if filter.count == 0
+    return @all_users ||= query_result_to_user_list(RunCommand.all)
+  end
+
+  condition_sql = ' 1 = 1 '
+  params = []
+
+  if filter[:months_ago]
+    condition_sql << " AND created_at > ? "
+    params << filter[:months_ago].months.ago
+  end
+
+  if filter[:command]
+    condition_sql << " AND command LIKE %?% "
+    params << "%#{filter[:command]}%"
+  end
+
+  query_result_to_user_list(RunCommand.where(condition_sql, params))
+end
+
+def query_result_to_user_list(result)
+  return result.to_a.uniq { |c| c.user_id }.map { |c| { User.new(c.user_name, c.user_id) } }
 end
 
 def crown_ruotd
-  set_channel_topic("Congratulations to @#{random_username}, today's #random user of the day!")
+  set_channel_topic("Congratulations to @#{random_username(true)}, today's #random user of the day!")
 end
 
-def random_username
-  all_users.sample[:user_name]
+def random_username(purged = false)
+  if purged
+    all_users months_ago: 3
+  else
+    all_users
+  end.sample.user_name
 end
 
 def random_user
