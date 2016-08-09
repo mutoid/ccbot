@@ -166,7 +166,7 @@ def all_users(filter = {})
   end
 
   if filter[:command]
-    condition_sql << " AND command LIKE %?% "
+    condition_sql << " AND command LIKE ? "
     params << "%#{filter[:command]}%"
   end
 
@@ -174,7 +174,7 @@ def all_users(filter = {})
 end
 
 def query_result_to_user_list(result)
-  return result.to_a.uniq { |c| c.user_id }.map { |c| { User.new(c.user_name, c.user_id) } }
+  return result.to_a.uniq { |c| c.user_id }.map { |c| User.new(c.user_name, c.user_id) }
 end
 
 def crown_ruotd
@@ -194,5 +194,5 @@ def random_user
 end
 
 def emoji_word word
-    word.gsub /(\w)/, ':\1\1:'
+  word.gsub /(\w)/, ':\1\1:'
 end
