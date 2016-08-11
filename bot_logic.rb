@@ -163,8 +163,10 @@ def cross_word s
   "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
 end
 
-def square_word s
-  a = ascii_to_fullwidth(s.upcase).each_char.to_a
+def square_word(s, fullwidth = true)
+  s = s.upcase
+  s = ascii_to_fullwidth(s) if fullwidth
+  a = s.each_char.to_a
   "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
 end
 
