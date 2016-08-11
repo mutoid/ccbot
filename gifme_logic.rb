@@ -43,10 +43,11 @@ class GifmeLogic
     puts results["meta"]
     # results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
     results['data'].keep_if { |result| result['score'] <= 10 }
+    results['data'].delete_if { |result| result['link'] =~ /\.jpe?g$/i }
     puts results
     return "No gifme.io results found for '#{terms}'" if results["data"].size == 0
 
-    image_url = results["data"].first(10).sample()["link"]
+    image_url = results['data'].first(10).sample()['link']
     final_url = html5_link image_url
 
     print image_url
