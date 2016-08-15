@@ -109,7 +109,7 @@ class BotLogic < Sinatra::Base
     end
     output = ""
     #output <<  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
-    #output << "``` => #{result}```" if !result.nil?
+    output << "``` => #{result}```" if !result.nil?
 
     Chat.new(channel).chat_out(output)
   end
