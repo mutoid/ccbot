@@ -81,6 +81,39 @@ class BotLogic < Sinatra::Base
     Chat.new(channel).chat_out(output)
   end
 
+  post('/rubysilent') do
+    puts "Evaluating Ruby code from the web, WCGW?"
+    puts "Params: ", params
+
+    channel = params[:channel_id]
+    user_name = params[:user_name]
+    user_id = params[:user_id]
+    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    break "You don't have permission to do this." if !admin_user
+
+    @current_channel = channel
+    @current_user_name = user_name
+    
+    code = params[:text]
+
+    # #YOLO dawg
+    result = nil
+    begin
+      Timeout.timeout(30) do
+        result = eval(code)
+      end
+    rescue SyntaxError => se
+      break "There was a syntax error in #{code} #{se.message}"
+    rescue StandardError => e
+      break "There was an error: #{e.message}"
+    end
+    output = ""
+    #output <<  "_#{user_name} ran some Ruby code:_\n```#{code}```\n"
+    #output << "``` => #{result}```" if !result.nil?
+
+    Chat.new(channel).chat_out(output)
+  end
+
   post('/lenny') do
     puts "Processing /lenny command"
     puts "Params: ", params
