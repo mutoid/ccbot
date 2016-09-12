@@ -190,7 +190,7 @@ def all_users(filter = {})
     params << "%#{filter[:command]}%"
   end
 
-  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, params))
+  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
 end
 
 def query_result_to_user_list(result)
