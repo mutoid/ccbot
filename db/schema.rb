@@ -13,6 +13,17 @@
 
 ActiveRecord::Schema.define(version: 20160317225850) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "megamojis", force: :cascade do |t|
+    t.string   "base_name"
+    t.integer  "width"
+    t.integer  "count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "run_commands", force: :cascade do |t|
     t.string   "user_name"
     t.string   "user_id"
