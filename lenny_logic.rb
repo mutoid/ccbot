@@ -13,8 +13,8 @@ class LennyLogic
              "( ͠° ͟ʖ ͡°)"]
 
    HALLOWEEN_LENNYS = ["(◔ д◔) ｓｐｏｏｋｅｄ！",
-                       "ᕕ༼ •́ Д •̀ ༽ᕗ 𝓢𝓤𝓟𝓔𝓡 𝓢𝓟𝓞𝓞𝓚𝓔𝓓!",
-                       "ᕦ⊙෴⊙ᕤ :doot: 𝕊ℙ𝕆𝕆𝕂𝕐 𝔻𝕆𝕆𝕋𝕊! :doot:",
+                       "ᕕ༼ •́ Д •̀ ༽ᕗ *SUPER SPOOKED*!",
+                       "ᕦ⊙෴⊙ᕤ :doot: *ＳＰＯＯＫＹ　ＤＯＯＴＳ!* :doot:",
                        "/╲/( ͡° ͡° ͜ʖ ͡° ͡°)/\\╱\\ That's enough spookin'"]
 
   def self.process(params)
