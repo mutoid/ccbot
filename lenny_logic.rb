@@ -12,18 +12,18 @@ class LennyLogic
              "ᕦ( ͡° ͜ʖ ͡°)ᕤ You did it!",
              "( ͠° ͟ʖ ͡°)"]
 
-   HALLOWEEN_LENNYS = ["(◔ д◔) ｓｐｏｏｋｅｄ！",
-                       "ᕕ༼ •́ Д •̀ ༽ᕗ *SUPER SPOOKED*!",
-                       "ᕦ⊙෴⊙ᕤ :doot: *ＳＰＯＯＫＹ　ＤＯＯＴＳ!* :doot:",
-                       "/╲/( ͡° ͡° ͜ʖ ͡° ͡°)/\\╱\\ That's enough spookin'"]
+   SPOOKED_LENNYS = ["(◔ д◔) ｓｐｏｏｋｅｄ！",
+                     "ᕕ༼ •́ Д •̀ ༽ᕗ *SUPER SPOOKED*!",
+                     "ᕦ⊙෴⊙ᕤ :doot: *ＳＰＯＯＫＹ　ＤＯＯＴＳ!* :doot:",
+                     "/╲/( ͡° ͡° ͜ʖ ͡° ͡°)/\\╱\\ That's enough spookin'"]
 
   def self.process(params)
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
     power_user, admin_user = UserPrivilege.user_privs(user_id)
-    command_parts = params[:command].split(' ')
-    command = command_parts.first
+    command = params[:command]
+    terms = params[:text]
 
     commands_by_user = RunCommand.where user_id: user_id, command: command
     puts "#{user_name} has run this command #{commands_by_user.size} times."
@@ -42,11 +42,12 @@ class LennyLogic
     lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", Time.now - 10.seconds).count
     lenny_index = [lenny_count - 1, LENNYS.count - 1].min
     today = Date.today
-    lennies = if today.month == 10 && today.day > 29
-                HALLOWEEN_LENNYS
-              else
-                LENNYS
-              end
+    lennies = case terms
+    when /spook/i
+      SPOOKED_LENNYS
+    else
+      LENNYS
+    end
     lenny = lennies[lenny_index]
 
     if FAKE_RESPONSE
