@@ -4,6 +4,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'resolv-replace'
 require './chat'
 require './user_privs'
 
@@ -31,8 +32,18 @@ class GifmeLogic
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
+    begin
+      final_url = gifme_search(query_string, sfw)
+    rescue Exception => e
+      return e.message + "terms used: '#{terms}'"
+    end
+
+    Chat.new(channel).chat_out "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
+  end
+
+  def self.gifme_search(query_string, sfw)
     ### DO EXTERNAL REQUEST ###
-    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&sfw=#{sfw ? 'true' : 'false' }&limit=10&query=#{query_string}")
+    uri = URI.parse("http://api.gifme.io/v1/search?key=#{GIFME_API_KEY}&sfw=#{sfw ? 'true' : 'false' }&limit=20&query=#{query_string}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = false
     request = Net::HTTP::Get.new(uri)
@@ -42,19 +53,32 @@ class GifmeLogic
     results = JSON.parse response.body
 
     puts results["meta"]
-    # results['data'].keep_if { |result| terms.split(' ').all? { |term| result['tags'].all? { |t| t.downcase == term.downcase } } }
     results['data'].keep_if { |result| result['score'] <= 10 }
     results['data'].delete_if { |result| result['link'] =~ /\.jpe?g$/i }
     puts results
-    return "No gifme.io results found for '#{terms}'" if results["data"].size == 0
+    raise "No gifme.io results found" if results["data"].size == 0
 
-    image_url = results['data'].first(10).sample()['link']
+    images = results['data'].first(10).map { |data| data['link'] }.shuffle
+    while ((image_url = images.pop))
+      puts "Trying #{image_url}..."
+      ### ANOTHER EXTERNAL REQUEST ###
+      uri = URI.parse(image_url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = false
+      request = Net::HTTP::Get.new(uri)
+      response = http.request(request)
+      ###
+      if response.code.to_i != 200
+        puts "Throwing out broken link #{image_url} (response code: #{response.code})"
+        next
+      end
+      break
+    end
+    raise "gifme.io results all had broken links.  Sorry." if !image_url
     final_url = html5_link image_url
 
     print image_url
     print " => #{final_url}" if final_url != image_url
     print "\n"
-
-    Chat.new(channel).chat_out "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
   end
 end
