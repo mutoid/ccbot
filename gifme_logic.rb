@@ -65,8 +65,7 @@ class GifmeLogic
       uri = URI.parse(image_url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = false
-      request = Net::HTTP::Get.new(uri)
-      response = http.request(request)
+      response = http.request_head(uri)
       ###
       if response.code.to_i != 200
         puts "Throwing out broken link #{image_url} (response code: #{response.code})"
