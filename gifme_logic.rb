@@ -38,6 +38,7 @@ class GifmeLogic
       return e.message + "terms used: '#{terms}'"
     end
 
+    puts "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
     Chat.new(channel).chat_out "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
   end
 
@@ -79,5 +80,6 @@ class GifmeLogic
     print image_url
     print " => #{final_url}" if final_url != image_url
     print "\n"
+    image_url
   end
 end
