@@ -15,6 +15,7 @@ require './lenny_logic'
 require './gifme_logic'
 require './conversion_logic'
 require './megamoji_logic'
+require './pin_logic.rb'
 
 class RunCommand < ActiveRecord::Base
 end
@@ -62,11 +63,17 @@ class BotLogic < Sinatra::Base
 
   post('/megamoji') do
     puts "Constructing a large rectangular emoji..."
-    puts "Parmas: ", params
+    puts "Params: ", params
 
     result = MegamojiLogic.process(params)
 
     break result if result
+  end
+
+  post('/archivepins') do
+    puts "Deleting all pins and saving them in the db!"
+
+    PinLogic.new(params).remove_all_pins
   end
 
   post('/ruby') do
