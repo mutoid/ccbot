@@ -15,8 +15,29 @@ require './lenny_logic'
 require './gifme_logic'
 require './conversion_logic'
 require './megamoji_logic'
+require './pin_logic.rb'
 
 class RunCommand < ActiveRecord::Base
+end
+
+class User
+  attr_accessor :user_name, :user_id
+
+  def initialize(user_name, user_id)
+    @user_name, @user_id = user_name, user_id
+  end
+
+  def ==(other)
+    user_id == other.user_id
+  end
+
+  def eql?(other)
+    self == other
+  end
+
+  def hash
+    user_id.hash
+  end
 end
 
 class BotLogic < Sinatra::Base
@@ -42,11 +63,17 @@ class BotLogic < Sinatra::Base
 
   post('/megamoji') do
     puts "Constructing a large rectangular emoji..."
-    puts "Parmas: ", params
+    puts "Params: ", params
 
     result = MegamojiLogic.process(params)
 
     break result if result
+  end
+
+  post('/archivepins') do
+    puts "Deleting all pins and saving them in the db!"
+
+    PinLogic.new(params).remove_all_pins
   end
 
   post('/ruby') do
@@ -143,23 +170,56 @@ def cross_word s
   "\n" + (a[1..-1].unshift(a.join(" "))).join("\n")
 end
 
-def square_word s
-  a = ascii_to_fullwidth(s.upcase).each_char.to_a
+def square_word(s, fullwidth = true)
+  s = s.upcase
+  s = ascii_to_fullwidth(s) if fullwidth
+  a = s.each_char.to_a
   "\n" + Array.new(a.length) { |i| a.rotate(i).join(" ") }.join("\n")
 end
 
-def all_users
-  @all_users ||= RunCommand.all.to_a.uniq { |x| x.user_id }.map { |c| { user_name: c.user_name, user_id: c.user_id } }
+def all_users(filter = {})
+  @all_users ||= {}
+
+  if filter.count == 0
+    return @all_users['all'] ||= query_result_to_user_list(RunCommand.all)
+  end
+
+  condition_sql = ' 1 = 1 '
+  params = []
+
+  if filter[:months_ago]
+    condition_sql << " AND created_at > ? "
+    params << filter[:months_ago].months.ago
+  end
+
+  if filter[:command]
+    condition_sql << " AND command LIKE ? "
+    params << "%#{filter[:command]}%"
+  end
+
+  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
+end
+
+def query_result_to_user_list(result)
+  result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
 end
 
 def crown_ruotd
-  set_channel_topic("Congratulations to @#{random_username}, today's #random user of the day!")
+  set_channel_topic("Congratulations to @#{random_username(true)}, today's #random user of the day!")
 end
 
-def random_username
-  all_users.sample[:user_name]
+def random_username(purged = false)
+  if purged
+    all_users months_ago: 3
+  else
+    all_users
+  end.sample.user_name
 end
 
 def random_user
   "Randomly-selected user who has run /lenny is: #{random_username}"
+end
+
+def emoji_word word
+  word.gsub /(\w)/, ':\1\1:'
 end
