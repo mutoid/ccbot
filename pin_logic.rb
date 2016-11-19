@@ -1,6 +1,7 @@
 require 'json'
 require './pin'
 require './chat'
+require './user'
 
 WEBHOOK_TOKEN = ENV['WEBHOOK_TOKEN']
 PINS_URL = "https://slack.com/api/pins.list"
@@ -59,16 +60,18 @@ class PinLogic
     private
 
     def get_name_for_user(id)
-        all_users = []
-        user = all_users.find { |u| u.user_id == v }
-        if !user
-            response = remote_request USER_INFO_URL, user: id
-            h = JSON.parse(response.body).to_h
-            u = h['user']
-            u == nil ? nil : u['name']
-        else
-            user.user_name
-        end
+      all_users = []
+      user = all_users.find { |u| u.user_id == id }
+      if !user
+        response = remote_request USER_INFO_URL, user: id
+        h = JSON.parse(response.body).to_h
+        u = h['user']
+        name = u == nil ? nil : u['name']
+        all_users << User.new name, id
+        name
+      else
+        user.user_name
+      end
     end
 
     def remove_pin(channel, timestamp)
