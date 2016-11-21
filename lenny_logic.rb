@@ -39,15 +39,14 @@ class LennyLogic
     new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
     new_command.save
 
-    lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", Time.now - 10.seconds).count
-    lenny_index = [lenny_count - 1, LENNYS.count - 1].min
-    today = Date.today
+    lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", 10.seconds.ago).count
     lennies = case terms
     when /spook/i
       SPOOKED_LENNYS
     else
       LENNYS
     end
+    lenny_index = [lenny_count - 1, lennies.count - 1].min
     lenny = lennies[lenny_index]
 
     if FAKE_RESPONSE
