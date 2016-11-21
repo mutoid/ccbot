@@ -204,3 +204,19 @@ end
 def emoji_word word
   word.gsub /(\w)/, ':\1\1:'
 end
+
+def update_users_table
+  commands = RunCommand.arel_table
+  user_ids = commands.project(commands[:id].maximum.as('max')).group(:user_id)
+  most_recent_commands = RunCommand.find_by_sql("select * from run_commands where id in (#{user_ids.to_sql})").map(&:user_name)
+  most_recent_commands.each do |command|
+    u = User.with_user_id(command.user_id)
+    if !u.nil?
+      u = User.new
+    end
+    u.name = command.user_name
+    u.updated_at = command.created_at
+    u.user_id = command.user_id
+    u.save!
+  end
+end
