@@ -14,7 +14,7 @@ class GifmeLogic
   def self.html5_link(url)
     url = url.sub(' ', '%20')
     return url.sub(/\.gif$/, '.gifv') if url.include? 'imgur'
-    return url.sub(/[^.]*\.(gfycat.com\/.*)\.gif/, 'https://\1') if url.include? 'gfycat'
+    return url.sub(/[^.]*\.(gfycat.com\/.*)(\.gif|\.webm)/, 'https://\1') if url.include? 'gfycat'
     url
   end
 
