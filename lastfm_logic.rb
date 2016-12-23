@@ -8,7 +8,7 @@ require 'resolv-replace'
 require './chat'
 require './user_privs'
 
-LASTFM_API_KEY = ENV['GIFME_API_KEY']
+LASTFM_API_KEY = ENV['LASTFM_API_KEY']
 
 class LastfmLogic
   def self.process(params)
