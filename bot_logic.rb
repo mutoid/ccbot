@@ -1,4 +1,4 @@
-# coding: utf-8
+  # coding: utf-8
 # -*- coding: utf-8 -*-
 require 'sinatra/base'
 require 'net/http'
@@ -70,7 +70,7 @@ class BotLogic < Sinatra::Base
 
     @current_channel = channel
     @current_user_name = user_name
-    
+
     code = params[:text]
 
     # #YOLO dawg
@@ -90,6 +90,14 @@ class BotLogic < Sinatra::Base
     Chat.new(channel).chat_out(output)
   end
 
+  post('/lastfm') do
+    puts "Processing /lastfm command"
+    puts "Params: ", params
+
+    output = LastfmLogic.process(params)
+    break output if output
+  end
+
   post('/lenny') do
     puts "Processing /lenny command"
     puts "Params: ", params
@@ -100,6 +108,8 @@ class BotLogic < Sinatra::Base
 
   run! if app_file == $0
 end
+
+
 
 def count_to_lenny(count, report_width, max_bar)
   lenny_full = '( ͡° ͜ʖ ͡°)'
