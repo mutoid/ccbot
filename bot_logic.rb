@@ -109,8 +109,6 @@ class BotLogic < Sinatra::Base
   run! if app_file == $0
 end
 
-
-
 def count_to_lenny(count, report_width, max_bar)
   lenny_full = '( ͡° ͜ʖ ͡°)'
   lenny_2_3 = '( ͡° ͜ʖ'

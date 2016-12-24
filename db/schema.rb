@@ -53,4 +53,13 @@ ActiveRecord::Schema.define(version: 20160317225850) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "last_fm", force: :cascade do |t|
+    t.string   "user_id"
+    t.string   "name"
+    t.string   "country"
+    t.integer  "playcount"
+  end
+
+  #I'm gonna do some garbage with relational play counts and stuff so I can have similarity rankings
+
 end
