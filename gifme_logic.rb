@@ -80,6 +80,6 @@ class GifmeLogic
     print image_url
     print " => #{final_url}" if final_url != image_url
     print "\n"
-    image_url
+    final_url
   end
 end

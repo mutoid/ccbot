@@ -67,7 +67,7 @@ class PinLogic
         h = JSON.parse(response.body).to_h
         u = h['user']
         name = u == nil ? nil : u['name']
-        all_users << User.new name, id
+        all_users << User.new(name, id)
         name
       else
         user.user_name
