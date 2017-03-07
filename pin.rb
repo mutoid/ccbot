@@ -11,5 +11,13 @@ class Pin < ActiveRecord::Base
     # channel_id: string
     # channel_name: string
     # slack_timestamp: string
-    scope :all_quotes_by, ->(user_name) { where("author_name = ?", user_name)}
+  scope :all_quotes_by, ->(user_name) { where("author_name = ?", user_name)}
+
+  def to_s
+    "#{self.author_name} '#{self.text}'"
+  end
+
+  def format
+    ">#{self.text}\n--_#{self.author_name}_"
+  end
 end
