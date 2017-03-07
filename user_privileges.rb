@@ -2,7 +2,12 @@ require 'sinatra'
 require 'sinatra/activerecord'
 
 class UserPrivilege < ActiveRecord::Base
-  def self.user_privs user_id, new_values = {}
+  # fk user_id
+  # power_user tinyint
+  # admin_user tinyint
+  has_one :user, dependent: :destroy
+
+  def self.user_privilege user_id, new_values = {}
     user = UserPrivilege.where(user_id: user_id).first
     return [false, false] if !user && new_values.empty?
     

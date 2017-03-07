@@ -18,9 +18,7 @@ require './conversion_logic'
 require './megamoji_logic'
 require './pin_logic'
 require './user'
-
-class RunCommand < ActiveRecord::Base
-end
+require './run_command'
 
 class BotLogic < Sinatra::Base
   get('/') do
@@ -209,7 +207,7 @@ end
 def update_users_table
   commands = RunCommand.arel_table
   user_ids = commands.project(commands[:id].maximum.as('max')).group(:user_id)
-  most_recent_commands = RunCommand.find_by_sql("select * from run_commands where id in (#{user_ids.to_sql})").map(&:user_name)
+  most_recent_commands = RunCommand.find_by_sql("select * from run_commands where id in (#{user_ids.to_sql})")
   most_recent_commands.each do |command|
     u = User.with_user_id(command.user_id)
     if !u.nil?
