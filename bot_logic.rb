@@ -9,7 +9,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
 require './chat'
-require './user_privs'
+require './user_privileges'
 require './megamoji'
 require './pin'
 require './lenny_logic'
@@ -21,6 +21,10 @@ require './user'
 require './run_command'
 
 class BotLogic < Sinatra::Base
+  before do
+    @user = User.with_user_id(params[:user_id])
+  end
+
   get('/') do
     puts "Processing get / request"
     "I'm up."
