@@ -15,12 +15,24 @@ class PinLogic
     end
 
     def pins_list
-        response = remote_request PINS_URL, channel: @channel_id
-        h = JSON.parse(response.body).to_h
-        messages = h['items'].map { |m| { author_id: m['message']['user'], pinner_id: m['created_by'], text: m['message']['text'], ts: m['message']['ts']} }
-        messages.map do |h|
-            h[:author_name] = get_name_for_user(h[:author_id])
-            h[:pinner_name] = get_name_for_user(h[:pinner_id])
+        puts "Getting pin list..."
+        begin
+            response = remote_request PINS_URL, channel: @channel_id
+            h = JSON.parse(response.body).to_h
+            puts h
+            messages = h['items'].select { |i| i['type'] == 'message' }.map { |m|
+              { author_id: m['message']['user'],
+                pinner_id: m['created_by'],
+                text: m['message']['text'],
+                ts: m['message']['ts']
+              }
+            }
+            messages.map do |h|
+                h[:author_name] = get_name_for_user(h[:author_id])
+                h[:pinner_name] = get_name_for_user(h[:pinner_id])
+        end
+        rescue Exception => e
+            puts "Hook operation failed because #{e.message}"
         end
         messages
     end
