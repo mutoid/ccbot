@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
 
   private
 
-  def fetch_user(id)
+  def self.fetch_user(id)
     response = remote_request USER_INFO_URL, user: id
     h = JSON.parse(response.body).to_h
     u = h['user']
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
     user
   end
 
-  def remote_request(url, params)
+  def self.remote_request(url, params)
       params = {token: WEBHOOK_TOKEN}.merge params
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
