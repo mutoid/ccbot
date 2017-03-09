@@ -18,8 +18,8 @@ class MigrateUsersToTable < ActiveRecord::Migration
 
     puts "Set user id references"
     Pin.all.each do |p|
-        author = User.with_user_id(p.author_slack_id).first
-        pinner = User.with_user_id(p.pinner_slack_id).first
+        author = User.fetch_by_user_id(p.author_slack_id)
+        pinner = User.fetch_by_user_id(p.pinner_slack_id)
         puts "Pin #{p.text} by author #{author} pinned by #{pinner}"
         p.author = author
         p.pinner = pinner

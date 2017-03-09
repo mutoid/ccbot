@@ -22,7 +22,7 @@ require './run_command'
 
 class BotLogic < Sinatra::Base
   before do
-    @user = User.with_user_id(params[:user_id])
+    @user = User.find_or_create(params[:user_name], params[:user_id])
   end
 
   get('/') do
@@ -67,8 +67,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    user = User.find_or_create(user_name, user_id)
-    power_user, admin_user = UserPrivilege.user_privs(user)
+    power_user, admin_user = UserPrivilege.user_privs(@user)
     break "You don't have permission to do this." if !admin_user
 
     @current_channel = channel
@@ -117,8 +116,8 @@ end
 def lenny_graph(report_width=12.0)
   report_width = report_width.to_f
   total_count = RunCommand.count
-  name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1
-  report = RunCommand.where(command: '/lenny').map { |x| [x.user_id, x.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
+  name_length = RunCommand.pluck(:user).uniq.map(&:length).max + 1
+  report = RunCommand.joins(:user).where(command: '/lenny').map { |x| [x.user.user_id, x.user.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
   max_bar = report.max_by { |name, count| count }.last
   name_format_string = "%-#{name_length}.#{name_length}s"
   lenny_scale = (max_bar / report_width).round(2)
@@ -166,7 +165,7 @@ def all_users(filter = {})
   @all_users ||= {}
 
   if filter.count == 0
-    return @all_users['all'] ||= query_result_to_user_list(RunCommand.all)
+    return @all_users['all'] ||= query_result_to_user_list(RunCommand.joins(:user).all)
   end
 
   condition_sql = ' 1 = 1 '
@@ -182,11 +181,11 @@ def all_users(filter = {})
     params << "%#{filter[:command]}%"
   end
 
-  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
+  @all_users["#{condition_sql} #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
 end
 
 def query_result_to_user_list(result)
-  result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
+  result.to_a.map { |c| c.user }.uniq
 end
 
 def crown_ruotd
@@ -207,20 +206,4 @@ end
 
 def emoji_word word
   word.gsub /(\w)/, ':\1\1:'
-end
-
-def update_users_table
-  commands = RunCommand.arel_table
-  user_ids = commands.project(commands[:id].maximum.as('max')).group(:user_id)
-  most_recent_commands = RunCommand.find_by_sql("select * from run_commands where id in (#{user_ids.to_sql})")
-  most_recent_commands.each do |command|
-    u = User.with_user_id(command.user_id)
-    if !u.nil?
-      u = User.new
-    end
-    u.name = command.user_name
-    u.updated_at = command.created_at
-    u.user_id = command.user_id
-    u.save!
-  end
 end

@@ -2,6 +2,9 @@ require 'sinatra/base'
 require 'sinatra'
 require 'sinatra/activerecord'
 
+WEBHOOK_TOKEN = ENV['WEBHOOK_TOKEN']
+USER_INFO_URL = "https://slack.com/api/users.info"
+
 class User < ActiveRecord::Base
   # user_id: string
   # user_name: string
@@ -22,6 +25,11 @@ class User < ActiveRecord::Base
     end
     user
   end
+
+  def self.fetch_by_user_id(user_id)
+    user = with_user_id(user_id).first
+    user = fetch_user(user_id) if !user
+  end
   
   def ==(other)
     user_id == other.user_id
@@ -33,5 +41,27 @@ class User < ActiveRecord::Base
 
   def hash
     user_id.hash
+  end
+
+  private
+
+  def fetch_user(id)
+    response = remote_request USER_INFO_URL, user: id
+    h = JSON.parse(response.body).to_h
+    u = h['user']
+    name = u == nil ? nil : u['name']
+    user = User.new(user_name: name, user_id: id)
+    user.save
+    user
+  end
+
+  def remote_request(url, params)
+      params = {token: WEBHOOK_TOKEN}.merge params
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.set_form_data(params)
+      response = http.request(request)
   end
 end

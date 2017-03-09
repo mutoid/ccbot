@@ -5,7 +5,6 @@ require './user'
 
 WEBHOOK_TOKEN = ENV['WEBHOOK_TOKEN']
 PINS_URL = "https://slack.com/api/pins.list"
-USER_INFO_URL = "https://slack.com/api/users.info"
 REMOVE_URL = "https://slack.com/api/pins.remove"
 
 class PinLogic
@@ -28,8 +27,8 @@ class PinLogic
               }
             }
             messages.map do |h|
-                h[:author] = fetch_user(h[:author_id])
-                h[:pinner] = fetch_user(h[:pinner_id])
+                h[:author] = User.fetch_by_user_id(h[:author_id])
+                h[:pinner] = User.fetch_by_user_id(h[:pinner_id])
         end
         rescue Exception => e
             puts "Hook operation failed because #{e.message}"
@@ -45,10 +44,8 @@ class PinLogic
                 begin
                     puts "Saving pin ..."
                     pindb = Pin.new
-                    pindb.author_id = pin[:author_id]
-                    pindb.author_name = pin[:author_name]
-                    pindb.pinner_id = pin[:pinner_id]
-                    pindb.pinner_name = pin[:pinner_name]
+                    pindb.author = pin[:author]
+                    pindb.pinner = pin[:pinner]
                     pindb.text = pin[:text]
                     pindb.channel_id = @channel_id
                     pindb.channel_name = @channel_name
@@ -70,21 +67,6 @@ class PinLogic
     end
 
     private
-
-    def fetch_user(id)
-      user = User.with_user_id(id).first
-      if !user
-        response = remote_request USER_INFO_URL, user: id
-        h = JSON.parse(response.body).to_h
-        u = h['user']
-        name = u == nil ? nil : u['name']
-        user = User.new(user_name: name, user_id: id)
-        user.save
-        user
-      else
-        user
-      end
-    end
 
     def remove_pin(channel, timestamp)
         remote_request REMOVE_URL, channel: channel, timestamp: timestamp
