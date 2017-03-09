@@ -35,8 +35,8 @@ ActiveRecord::Schema.define(version: 20160317225850) do
     t.integer  "pinner_id"
   end
 
-  add_index "pins", ["author_id"], name: "index_pins_on_author_id"
-  add_index "pins", ["pinner_id"], name: "index_pins_on_pinner_id"
+  add_index "pins", ["author_id"], name: "index_pins_on_author_id", using: :btree
+  add_index "pins", ["pinner_id"], name: "index_pins_on_pinner_id", using: :btree
 
   create_table "run_commands", force: :cascade do |t|
     t.string   "command"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 20160317225850) do
     t.integer  "user_id"
   end
 
+  add_index "run_commands", ["user_id"], name: "index_run_commands_on_user_id", using: :btree
+
   create_table "user_privileges", force: :cascade do |t|
     t.integer  "power_user"
     t.integer  "admin_user"
@@ -52,6 +54,8 @@ ActiveRecord::Schema.define(version: 20160317225850) do
     t.datetime "updated_at", null: false
     t.integer  "user_id"
   end
+
+  add_index "user_privileges", ["user_id"], name: "index_user_privileges_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "user_id"

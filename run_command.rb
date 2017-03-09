@@ -5,5 +5,5 @@ require 'sinatra/activerecord'
 class RunCommand < ActiveRecord::Base
       # fk user_id
       # string command
-    belongs_to :user, dependent: :nullify
+    belongs_to :user
 end

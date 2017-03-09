@@ -12,8 +12,8 @@ class MigrateUsersToTable < ActiveRecord::Migration
         t.rename :pinner_id, :pinner_slack_id
         t.remove :author_name
         t.remove :pinner_name
-        t.references :author, references: :users, index: true, on_delete: :nullify
-        t.references :pinner, references: :users, index: true, on_delete: :nullify
+        t.references :author, references: :users, index: true
+        t.references :pinner, references: :users, index: true
     end
 
     puts "Set user id references"
@@ -35,7 +35,7 @@ class MigrateUsersToTable < ActiveRecord::Migration
     change_table :run_commands do |t|
         t.rename :user_id, :user_slack_id
         t.remove :user_name
-        t.references :user, index: true, on_delete: :nullify
+        t.references :user, index: true
     end
 
     puts "Set user id references"
@@ -50,7 +50,6 @@ class MigrateUsersToTable < ActiveRecord::Migration
     puts "Add FK to UserPrivilege"
     change_table :user_privileges do |t|
         t.rename :user_id, :user_slack_id
-        t.remove :user_name
         t.references :user, index: true, on_delete: :cascade
     end
 

@@ -5,15 +5,14 @@ class UserPrivilege < ActiveRecord::Base
   # fk user_id
   # power_user tinyint
   # admin_user tinyint
-  belongs_to :user
+  belongs_to :user, dependent: :destroy
 
-  def self.user_privilege user_id, new_values = {}
-    user = UserPrivilege.where(user_id: user_id).first
+  def self.user_privs user, new_values = {}
+    user = UserPrivilege.where(user: user).first
     return [false, false] if !user && new_values.empty?
     
     if !user
       user = UserPrivilege.new
-      user.user_id = user_id
     end
     
     if !new_values.empty?

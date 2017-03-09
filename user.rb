@@ -10,8 +10,8 @@ class User < ActiveRecord::Base
   belongs_to :run_command
   belongs_to :user_privilege
 
-  scope :named, ->(name) { where("user_name = ?", user_name) }
-  scope :with_user_id, ->(user_id) { where("user_id = ?", user_id) }
+  scope :named, ->(name) { where("user_name = ?", name) }
+  scope :with_user_id, ->(id) { where("user_id = ?", id) }
   scope :active_within, ->(duration) { where("updated_at > ?", duration.ago) }
 
   def self.find_or_create(user_name, user_id)
