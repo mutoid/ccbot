@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 require './chat'
-require './user_privs'
+require './user_privileges'
 
 class MegamojiLogic
   def self.define_megamoji(base_name, width, count)

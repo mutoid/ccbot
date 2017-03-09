@@ -6,7 +6,7 @@ require 'uri'
 require 'json'
 require 'resolv-replace'
 require './chat'
-require './user_privs'
+require './user_privileges'
 
 GIFME_API_KEY = ENV['GIFME_API_KEY']
 
