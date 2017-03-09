@@ -1,25 +1,25 @@
 class MigrateUsersToTable < ActiveRecord::Migration
   def up
-    # Populate User model
+    puts "Populate User model"
     values = RunCommand.select(:user_id, :user_name).distinct.map do |c|
-        u = User.new { user_id: c.user_id, user_name: c.user_name }
+        u = User.new(user_id: c.user_id, user_name: c.user_name)
         u.save!
     end
 
-    # Add FKs to Pin author, pinner
+    puts "Add FKs to Pin author, pinner"
     change_table :pins do |t|
         t.rename :author_id, :author_slack_id
         t.rename :pinner_id, :pinner_slack_id
-        t.remove_column :author_id
-        t.remove_column :pinner_id
-        t.remove_column :author_name
-        t.remove_column :pinner_name
-        t.references :user, :author_id, foreign_key: { to_table: :users, on_delete: :nullify }
-        t.references :user, :pinner_id, foreign_key: { to_table: :users, on_delete: :nullify }
+        t.remove :author_id
+        t.remove :pinner_id
+        t.remove :author_name
+        t.remove :pinner_name
+        t.references :author, references: :users, index: true, on_delete: :nullify
+        t.references :pinner, references: :users, index: true, on_delete: :nullify
     end
 
-    # Set user id references
-    Pins.all.map do |p|
+    puts "Set user id references"
+    Pin.all.map do |p|
         author = User.with_user_id(p.author_slack_id)
         pinner = User.with_user_id(p.pinner_slack_id)
         p.author = author
@@ -28,19 +28,19 @@ class MigrateUsersToTable < ActiveRecord::Migration
     end
 
     change_table :pins do |t|
-        t.remove_column :author_slack_id
-        t.remove_column :pinner_slack_id
+        t.remove :author_slack_id
+        t.remove :pinner_slack_id
     end
 
-    # Add FK to RunCommand user
+    puts "Add FK to RunCommand user"
     change_table :run_commands do |t|
         t.rename :user_id, :user_slack_id
-        t.remove_column :user_id
-        t.remove_column :user_name
-        t.references :user, foreign_key: { on_delete: :nullify }
+        t.remove :user_id
+        t.remove :user_name
+        t.references :user, index: true, on_delete: :nullify
     end
 
-    # Set user id references
+    puts "Set user id references"
     RunCommand.all.map do |c|
         user = User.with_user_id(c.user_slack_id)
         c.user = user
@@ -49,15 +49,15 @@ class MigrateUsersToTable < ActiveRecord::Migration
 
     remove_column :run_commands, :user_slack_id
 
-    # Add FK to UserPrivilege
+    puts "Add FK to UserPrivilege"
     change_table :user_privileges do |t|
         t.rename :user_id, :user_slack_id
-        t.remove_column :user_id
-        t.remove_column :user_name
-        t.references :user, foreign_key: { on_delete: :nullify }
+        t.remove :user_id
+        t.remove :user_name
+        t.references :user, index: true, on_delete: :cascade
     end
 
-    # Set user id references
+    puts "Set user id references"
     UserPrivilege.all.map do |c|
         c.user_id
         user = User.with_user_id(c.user_slack_id)

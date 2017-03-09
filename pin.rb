@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'sinatra'
 require 'sinatra/activerecord'
+require './user.rb'
 
 class Pin < ActiveRecord::Base
     # text: text

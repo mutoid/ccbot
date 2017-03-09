@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 require './chat'
-require './user_privs'
+require './user_privileges'
 
 FAKE_RESPONSE = ENV['SINATRA_ENV'] != 'production'
 
