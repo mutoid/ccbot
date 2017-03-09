@@ -21,7 +21,8 @@ class LennyLogic
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    user = User.find_or_create(params[:user_name], params[:user_id])
+    power_user, admin_user = UserPrivilege.user_privs(user)
     command = params[:command]
     terms = params[:text]
 
