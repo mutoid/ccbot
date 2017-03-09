@@ -5,7 +5,7 @@ class UserPrivilege < ActiveRecord::Base
   # fk user_id
   # power_user tinyint
   # admin_user tinyint
-  has_one :user, dependent: :destroy
+  belongs_to :user
 
   def self.user_privilege user_id, new_values = {}
     user = UserPrivilege.where(user_id: user_id).first

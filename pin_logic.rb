@@ -28,8 +28,8 @@ class PinLogic
               }
             }
             messages.map do |h|
-                h[:author_name] = get_name_for_user(h[:author_id])
-                h[:pinner_name] = get_name_for_user(h[:pinner_id])
+                h[:author] = fetch_user(h[:author_id])
+                h[:pinner] = fetch_user(h[:pinner_id])
         end
         rescue Exception => e
             puts "Hook operation failed because #{e.message}"
@@ -71,18 +71,18 @@ class PinLogic
 
     private
 
-    def get_name_for_user(id)
-      all_users = []
-      user = all_users.find { |u| u.user_id == id }
+    def fetch_user(id)
+      user = User.with_user_id(id).first
       if !user
         response = remote_request USER_INFO_URL, user: id
         h = JSON.parse(response.body).to_h
         u = h['user']
         name = u == nil ? nil : u['name']
-        all_users << User.new(name, id)
-        name
+        user = User.new(user_name: name, user_id: id)
+        user.save
+        user
       else
-        user.user_name
+        user
       end
     end
 

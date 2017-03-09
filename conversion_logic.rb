@@ -39,7 +39,9 @@ class ConversionLogic
     command = params[:command]
     terms = params[:text]
 
-    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    user = User.find_or_create(user_name, user_id)
+
+    new_command = RunCommand.new user: user, command: command
     new_command.save
 
     begin

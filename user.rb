@@ -13,6 +13,15 @@ class User < ActiveRecord::Base
   scope :named, ->(name) { where("user_name = ?", user_name) }
   scope :with_user_id, ->(user_id) { where("user_id = ?", user_id) }
   scope :active_within, ->(duration) { where("updated_at > ?", duration.ago) }
+
+  def self.find_or_create(user_name, user_id)
+    user = with_user_id(user_id).first
+    if !user
+      user = User.new(user_name: user_name, user_id: user_id)
+      user.save!
+    end
+    user
+  end
   
   def ==(other)
     user_id == other.user_id

@@ -17,13 +17,14 @@ class MegamojiLogic
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    user = User.find_or_create(user_name, user_id)
+    power_user, admin_user = UserPrivilege.user_privs(user)
     terms = params[:text]
     command = params[:command]
     return "You need to specify an emoji, dummy!" if !terms.match(/\w+/)
     base_name = terms[/\w+/]
     
-    commands_by_user = RunCommand.where user_id: user_id, command: command
+    commands_by_user = RunCommand.where user: user, command: command
   
     if commands_by_user.size > 0
       last_megamoji = commands_by_user.last
@@ -38,7 +39,7 @@ class MegamojiLogic
 
     out_string = [*(1..emoji.count)].each_slice(emoji.width).map { |a|  a.map { |n| ":#{base_name}#{n}:" }.join }.join "\n"
 
-    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command = RunCommand.new user: user, command: command
     new_command.save
 
     if FAKE_RESPONSE

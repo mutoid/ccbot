@@ -8,8 +8,8 @@ class Pin < ActiveRecord::Base
     # channel_id: string
     # channel_name: string
     # slack_timestamp: string
-  has_one :author, class_name: User, foreign_key: :author_id, dependent: :nullify
-  has_one :pinner, class_name: User, foreign_key: :pinner_id, dependent: :nullify
+  belongs_to :author, class_name: User, foreign_key: :author_id, dependent: :nullify
+  belongs_to :pinner, class_name: User, foreign_key: :pinner_id, dependent: :nullify
 
   scope :all_quotes_by, ->(user_name) { joins("inner join users on users.user_id = pins.author_id").where("users.user_name = ?", user_name) }
 

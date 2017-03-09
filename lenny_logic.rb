@@ -25,7 +25,7 @@ class LennyLogic
     command = params[:command]
     terms = params[:text]
 
-    commands_by_user = RunCommand.where user_id: user_id, command: command
+    commands_by_user = RunCommand.where user: user, command: command
     puts "#{user_name} has run this command #{commands_by_user.size} times."
 
     if commands_by_user.size > 0
@@ -36,7 +36,7 @@ class LennyLogic
       return "Wait a bit, will ya?" if too_recent && !power_user
     end
 
-    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command = RunCommand.new user: user, command: command
     new_command.save
 
     lenny_count = RunCommand.where("command = '/lenny' AND created_at >= ?", 10.seconds.ago).count

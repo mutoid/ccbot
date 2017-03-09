@@ -23,13 +23,14 @@ class GifmeLogic
     channel_name = params[:channel_name]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    user = User.find_or_create(user_name, user_id)
+    power_user, admin_user = UserPrivilege.user_privs(user)
     command = params[:command]
     terms = params[:text]
     query_string = terms.gsub(' ','+')
     sfw = !channel_name.downcase.include?('nsfw')
 
-    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command = RunCommand.new user: user, command: command
     new_command.save
 
     begin
