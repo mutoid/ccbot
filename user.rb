@@ -43,6 +43,10 @@ class User < ActiveRecord::Base
     user_id.hash
   end
 
+  def to_s
+    user_name
+  end
+
   private
 
   def self.fetch_user(id)
