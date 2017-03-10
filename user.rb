@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
 
   def self.fetch_by_user_id(user_id)
     user = with_user_id(user_id).first
-    user = fetch_user(user_id) if !user
+    user ||= fetch_user(user_id)
   end
   
   def ==(other)
