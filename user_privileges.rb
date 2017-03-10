@@ -8,19 +8,19 @@ class UserPrivilege < ActiveRecord::Base
   belongs_to :user, dependent: :destroy
 
   def self.user_privs user, new_values = {}
-    user = UserPrivilege.where(user: user).first
-    return [false, false] if !user && new_values.empty?
+    priv = UserPrivilege.where(user: user).first
+    return [false, false] if !priv && new_values.empty?
     
-    if !user
-      user = UserPrivilege.new
+    if !priv
+      priv = UserPrivilege.new
     end
     
     if !new_values.empty?
-      user.power_user = new_values[:power_user] if new_values[:power_user]
-      user.admin_user = new_values[:admin_user] if new_values[:admin_user]
-      user.save!
+      priv.power_user = !!new_values[:power_user] if new_values[:power_user]
+      priv.admin_user = !!new_values[:admin_user] if new_values[:admin_user]
+      priv.save!
     end
     
-    return [user.power_user == 1, user.admin_user == 1]
+    return [!!priv.power_user, !!priv.admin_user]
   end
 end
