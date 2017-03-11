@@ -36,7 +36,7 @@ class GifmeLogic
     begin
       final_url = gifme_search(query_string, sfw)
     rescue Exception => e
-      return e.message + "terms used: '#{terms}'"
+      return e.message + " terms used: '#{terms}'"
     end
 
     puts "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
@@ -64,16 +64,20 @@ class GifmeLogic
     while ((image_url = images.pop))
       puts "Trying #{image_url}..."
       ### ANOTHER EXTERNAL REQUEST ###
-      uri = URI.parse(image_url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = false
-      response = http.request_head(uri)
-      ###
-      if response.code.to_i != 200
-        puts "Throwing out broken link #{image_url} (response code: #{response.code})"
-        next
+      begin
+        uri = URI.parse(image_url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = false
+        response = http.request_head(uri)
+        ###
+        if response.code.to_i != 200
+          puts "Throwing out broken link #{image_url} (response code: #{response.code})"
+          next
+        end
+        break
+      rescue Exception => e
+        puts "Got exception trying to visit #{image_url} (exception: #{e})"
       end
-      break
     end
     raise "gifme.io results all had broken links.  Sorry." if !image_url
     final_url = html5_link image_url
