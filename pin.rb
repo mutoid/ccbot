@@ -18,6 +18,6 @@ class Pin < ActiveRecord::Base
   end
 
   def format
-    ">#{self.text}\n--_#{self.author.user_name}_"
+    ">#{self.text.gsub("\n", "\n>")}\n--_#{self.author.user_name}_"
   end
 end
