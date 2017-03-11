@@ -11,6 +11,14 @@ class PinLogic
     def initialize(params)
         @channel_id = params[:channel_id]
         @channel_name = params[:channel_name]
+        @args = params[:text]
+    end
+
+    def quote
+      author = User.named(@args.split.first).first
+      return "No pinned quotes by such a user" if !author
+      pin = Pin.all_quotes_by(author.user_name).sample
+      Chat.new(@channel_id).chat_out(pin.format)
     end
 
     def pins_list

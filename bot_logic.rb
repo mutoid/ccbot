@@ -30,6 +30,12 @@ class BotLogic < Sinatra::Base
     "I'm up."
   end
 
+  post('/quote') do
+    puts "Quoting a user..."
+    result = PinLogic.new(params).quote
+    break result if result
+  end
+
   post('/convert') do
     puts "Doing a unit conversion..."
     puts "Params: ", params
