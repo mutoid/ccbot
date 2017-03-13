@@ -15,7 +15,7 @@ class PinLogic
     end
 
     def quote
-      author = User.named(@args.split.first).first
+      author = User.named(@args.split.first.gsub(/^@/,'')).first
       return "No pinned quotes by such a user" if !author
       pin = Pin.all_quotes_by(author.user_name).sample
       Chat.new(@channel_id).chat_out(pin.format)
