@@ -32,7 +32,12 @@ class PinLogic
       end
     end
 
-    author = User.named(params.split.first.gsub(/^@/,'')).first
+    name = User.named(params.split.first.gsub(/^@/,'')).first
+    if name == 'random'
+        author = User.pluck(:user_name).sample
+    else 
+        author = User.named(name).first
+    end
     return "No pinned quotes by such a user" if !author
 
     pin = Pin.all_quotes_by(author.user_name).sample
