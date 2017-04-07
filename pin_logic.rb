@@ -34,6 +34,9 @@ class PinLogic
 
     if name == 'random'
         Chat.new(@channel_id).chat_out(Pin.all.to_a.sample.format)
+    elsif name == 'channel'
+        pin = Pin.joins(:author).where(channel_id: @channel_id).sample
+        Chat.new(@channel_id).chat_out(pin.format)
     else 
         author = User.named(params.split.first.gsub(/^@/,'')).first 
         return "No pinned quotes by such a user" if !author
