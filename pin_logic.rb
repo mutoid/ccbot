@@ -35,7 +35,7 @@ class PinLogic
 
     if @query == 'random'
         Chat.new(@channel_id).chat_out(Pin.all.to_a.sample.format)
-    elsif name == 'channel'
+    elsif @query == 'channel'
         pin = Pin.joins(:author).where(channel_id: @channel_id).sample
         Chat.new(@channel_id).chat_out(pin.format)
     else 
