@@ -11,31 +11,32 @@ class PinLogic
   def initialize(params)
     @channel_id = params[:channel_id]
     @channel_name = params[:channel_name]
-    @params = params[:text]
+    @query = params[:text]
+    @params = params
   end
 
   def quote
     # Rate limiting
-    user = User.find_or_create(params[:user_name], params[:user_id])
+    user = User.find_or_create(@params[:user_name], @params[:user_id])
     power_user, admin_user = UserPrivilege.user_privs(user)
-    command = params[:command]
+    command = @params[:command]
     commands_by_user = RunCommand.where user: user, command: command
-    puts "#{user_name} has run this command #{commands_by_user.size} times."
+    puts "#{user.user_name} has run this command #{commands_by_user.size} times."
 
     if commands_by_user.size > 0
       last_run = commands_by_user.last
       too_recent = last_run.created_at + 5.minutes > Time.now
       if too_recent && !power_user
-        puts "#{user_name} last ran it too recently!"
+        puts "#{user.user_name} last ran it too recently!"
         puts "Should not run" 
         return "Try again in #{((last_run.created_at + 5.minutes) / 60.0).round(1)} minutes"
       end
     end
 
-    if name == 'random'
+    if @query == 'random'
         Chat.new(@channel_id).chat_out(Pin.all.to_a.sample.format)
     else 
-        author = User.named(params.split.first.gsub(/^@/,'')).first 
+        author = User.named(@query.split.first.gsub(/^@/,'')).first 
         return "No pinned quotes by such a user" if !author
 
         pin = Pin.all_quotes_by(author.user_name).sample
