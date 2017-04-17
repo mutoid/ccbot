@@ -42,6 +42,7 @@ class PinLogic
         chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[name.gsub(/#/,'')]
         return "No such channel exists" if !chan_id
         pin = Pin.joins(:author).where(channel_id: chan_id).sample
+        return "No pins found" if !pin
         Chat.new(chan_id).chat_out(pin.format)
     else 
         author = User.named(@query.split.first.gsub(/^@/,'')).first 
