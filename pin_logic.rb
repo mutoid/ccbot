@@ -38,6 +38,12 @@ class PinLogic
     elsif @query == 'channel'
         pin = Pin.joins(:author).where(channel_id: @channel_id).sample
         Chat.new(@channel_id).chat_out(pin.format)
+    elsif @query[0] == '#'
+        chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[name.gsub(/#/,'')]
+        return "No such channel exists" if !chan_id
+        pin = Pin.joins(:author).where(channel_id: chan_id).sample
+        return "No pins found" if !pin
+        Chat.new(chan_id).chat_out(pin.format)
     else 
         author = User.named(@query.split.first.gsub(/^@/,'')).first 
         return "No pinned quotes by such a user" if !author
