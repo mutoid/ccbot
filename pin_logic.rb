@@ -38,7 +38,7 @@ class PinLogic
     elsif @query == 'channel'
         pin = Pin.joins(:author).where(channel_id: @channel_id).sample
         Chat.new(@channel_id).chat_out(pin.format)
-    elsif name[0] == '#'
+    elsif @query[0] == '#'
         chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[name.gsub(/#/,'')]
         pin = Pin.joins(:author).where(channel_id: chan_id).sample
         Chat.new(chan_id).chat_out(pin.format)
