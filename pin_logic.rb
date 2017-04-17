@@ -40,6 +40,7 @@ class PinLogic
         Chat.new(@channel_id).chat_out(pin.format)
     elsif @query[0] == '#'
         chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[name.gsub(/#/,'')]
+        return "No such channel exists" if !chan_id
         pin = Pin.joins(:author).where(channel_id: chan_id).sample
         Chat.new(chan_id).chat_out(pin.format)
     else 
