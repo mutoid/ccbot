@@ -33,6 +33,9 @@ class PinLogic
       end
     end
 
+    new_command = RunCommand.new user: user, command: command
+    new_command.save
+
     if @query == 'random'
         Chat.new(@channel_id).chat_out(Pin.all.to_a.sample.format)
     elsif @query == 'channel'
@@ -49,6 +52,7 @@ class PinLogic
         return "No pinned quotes by such a user" if !author
 
         pin = Pin.all_quotes_by(author.user_name).sample
+        return "No pins found" if !pin
         Chat.new(@channel_id).chat_out(pin.format)
     end
   end
