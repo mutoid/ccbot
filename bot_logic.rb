@@ -69,20 +69,20 @@ class BotLogic < Sinatra::Base
   post('/roll') do
     begin
       puts "Rolling dice"
-      n, m = params[:text].scan(/\d+/)
-      accum = 0
+      n, m, modifier = params[:text].scan(/\d+/)
+      accum = [] 
       n = n.to_i
       m = m.to_i
       if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
         break "Invalid roll"
       end
       n.to_i.times {
-        accum += Random.new.rand(m.to_i) + 1
+        accum.append(Random.new.rand(m.to_i) + 1)
       }
 
 
       channel = params[:channel_id]
-      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + accum.to_s
+      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s) + " -  #{accum.sum + modifier}"
       puts "roll done"
       Chat.new(channel).chat_out(output)
     rescue
