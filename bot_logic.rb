@@ -82,7 +82,7 @@ class BotLogic < Sinatra::Base
 
 
       channel = params[:channel_id]
-      output = "You rolled - " + accum.to_s
+      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + accum.to_s
       puts "roll done"
       Chat.new(channel).chat_out(output)
     rescue
