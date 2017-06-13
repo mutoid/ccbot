@@ -69,7 +69,7 @@ class BotLogic < Sinatra::Base
   post('/roll') do
     begin
       puts "Rolling dice"
-      n, m = params[:text].scan(/\d+/)
+      n, m, modifier = params[:text].scan(/\d+/)
       accum = 0
       n = n.to_i
       m = m.to_i
@@ -82,7 +82,7 @@ class BotLogic < Sinatra::Base
 
 
       channel = params[:channel_id]
-      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + accum.to_s
+      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s + modifier)
       puts "roll done"
       Chat.new(channel).chat_out(output)
     rescue
