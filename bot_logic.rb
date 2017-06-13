@@ -80,9 +80,11 @@ class BotLogic < Sinatra::Base
         accum.append(Random.new.rand(m.to_i) + 1)
       }
 
-
       channel = params[:channel_id]
-      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s) + " -  #{accum.sum + modifier.to_i}"
+      if params[:text].include? "-"
+        output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s) + " -  #{accum.sum - modifier.to_i}"
+      else
+        output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s) + " -  #{accum.sum + modifier.to_i}"
       puts "roll done"
       Chat.new(channel).chat_out(output)
     rescue
