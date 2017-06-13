@@ -74,7 +74,7 @@ class BotLogic < Sinatra::Base
       n = n.to_i
       m = m.to_i
       if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
-        return "Invalid roll"
+        break "Invalid roll"
       end
       n.to_i.times {
         accum += Random.new.rand(m.to_i) + 1
