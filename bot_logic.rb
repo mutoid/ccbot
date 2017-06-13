@@ -9,41 +9,31 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require './environments'
 require './chat'
-require './user_privs'
+require './user_privileges'
 require './megamoji'
+require './pin'
 require './lenny_logic'
 require './gifme_logic'
 require './conversion_logic'
 require './megamoji_logic'
-require './pin_logic.rb'
-
-class RunCommand < ActiveRecord::Base
-end
-
-class User
-  attr_accessor :user_name, :user_id
-
-  def initialize(user_name, user_id)
-    @user_name, @user_id = user_name, user_id
-  end
-
-  def ==(other)
-    user_id == other.user_id
-  end
-
-  def eql?(other)
-    self == other
-  end
-
-  def hash
-    user_id.hash
-  end
-end
+require './pin_logic'
+require './user'
+require './run_command'
 
 class BotLogic < Sinatra::Base
+  before do
+    @user = User.find_or_create(params[:user_name], params[:user_id])
+  end
+
   get('/') do
     puts "Processing get / request"
     "I'm up."
+  end
+
+  post('/quote') do
+    puts "Quoting a user..."
+    result = PinLogic.new(params).quote
+    break result if result
   end
 
   post('/convert') do
@@ -76,6 +66,31 @@ class BotLogic < Sinatra::Base
     PinLogic.new(params).remove_all_pins
   end
 
+  post('/roll') do
+    begin
+      puts "Rolling dice"
+      n, m = params[:text].scan(/\d+/)
+      accum = 0
+      n = n.to_i
+      m = m.to_i
+      if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
+        break "Invalid roll"
+      end
+      n.to_i.times {
+        accum += Random.new.rand(m.to_i) + 1
+      }
+
+
+      channel = params[:channel_id]
+      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + accum.to_s
+      puts "roll done"
+      Chat.new(channel).chat_out(output)
+    rescue
+        puts "problem with roll"
+        break "Problem with roll"
+    end
+  end
+
   post('/ruby') do
     puts "Evaluating Ruby code from the web, WCGW?"
     puts "Params: ", params
@@ -83,7 +98,7 @@ class BotLogic < Sinatra::Base
     channel = params[:channel_id]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    power_user, admin_user = UserPrivilege.user_privs(@user)
     break "You don't have permission to do this." if !admin_user
 
     @current_channel = channel
@@ -132,8 +147,8 @@ end
 def lenny_graph(report_width=12.0)
   report_width = report_width.to_f
   total_count = RunCommand.count
-  name_length = RunCommand.pluck(:user_name).uniq.map(&:length).max + 1
-  report = RunCommand.where(command: '/lenny').map { |x| [x.user_id, x.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
+  name_length = RunCommand.pluck(:user).uniq.map(&:length).max + 1
+  report = RunCommand.joins(:user).where(command: '/lenny').map { |x| [x.user.user_id, x.user.user_name] }.group_by(&:first).map { |k, v| [v.first.last, v.count] }
   max_bar = report.max_by { |name, count| count }.last
   name_format_string = "%-#{name_length}.#{name_length}s"
   lenny_scale = (max_bar / report_width).round(2)
@@ -181,7 +196,7 @@ def all_users(filter = {})
   @all_users ||= {}
 
   if filter.count == 0
-    return @all_users['all'] ||= query_result_to_user_list(RunCommand.all)
+    return @all_users['all'] ||= query_result_to_user_list(RunCommand.joins(:user).all)
   end
 
   condition_sql = ' 1 = 1 '
@@ -197,11 +212,11 @@ def all_users(filter = {})
     params << "%#{filter[:command]}%"
   end
 
-  @all_users["condition_sql #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
+  @all_users["#{condition_sql} #{params}"] ||= query_result_to_user_list(RunCommand.where(condition_sql, *params))
 end
 
 def query_result_to_user_list(result)
-  result.to_a.map { |c| User.new(c.user_name, c.user_id) }.uniq
+  result.to_a.map { |c| c.user }.uniq
 end
 
 def crown_ruotd

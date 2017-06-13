@@ -6,7 +6,7 @@ require 'uri'
 require 'json'
 require 'resolv-replace'
 require './chat'
-require './user_privs'
+require './user_privileges'
 
 GIFME_API_KEY = ENV['GIFME_API_KEY']
 
@@ -14,7 +14,7 @@ class GifmeLogic
   def self.html5_link(url)
     url = url.sub(' ', '%20')
     return url.sub(/\.gif$/, '.gifv') if url.include? 'imgur'
-    return url.sub(/[^.]*\.(gfycat.com\/.*)\.gif/, 'https://\1') if url.include? 'gfycat'
+    return url.sub(/[^.]*\.(gfycat.com\/.*)(\.gif|\.webm)/, 'https://\1') if url.include? 'gfycat'
     url
   end
 
@@ -23,19 +23,20 @@ class GifmeLogic
     channel_name = params[:channel_name]
     user_name = params[:user_name]
     user_id = params[:user_id]
-    power_user, admin_user = UserPrivilege.user_privs(user_id)
+    user = User.find_or_create(user_name, user_id)
+    power_user, admin_user = UserPrivilege.user_privs(user)
     command = params[:command]
     terms = params[:text]
     query_string = terms.gsub(' ','+')
     sfw = !channel_name.downcase.include?('nsfw')
 
-    new_command = RunCommand.new user_id: user_id, user_name: user_name, command: command
+    new_command = RunCommand.new user: user, command: command
     new_command.save
 
     begin
       final_url = gifme_search(query_string, sfw)
     rescue Exception => e
-      return e.message + "terms used: '#{terms}'"
+      return e.message + " terms used: '#{terms}'"
     end
 
     puts "_#{user_name} searched gifme.io for '#{terms}' #{'(nsfw ok)' if !sfw}:_\n#{final_url}"
@@ -63,16 +64,20 @@ class GifmeLogic
     while ((image_url = images.pop))
       puts "Trying #{image_url}..."
       ### ANOTHER EXTERNAL REQUEST ###
-      uri = URI.parse(image_url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = false
-      response = http.request_head(uri)
-      ###
-      if response.code.to_i != 200
-        puts "Throwing out broken link #{image_url} (response code: #{response.code})"
-        next
+      begin
+        uri = URI.parse(image_url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = false
+        response = http.request_head(uri)
+        ###
+        if response.code.to_i != 200
+          puts "Throwing out broken link #{image_url} (response code: #{response.code})"
+          next
+        end
+        break
+      rescue Exception => e
+        puts "Got exception trying to visit #{image_url} (exception: #{e})"
       end
-      break
     end
     raise "gifme.io results all had broken links.  Sorry." if !image_url
     final_url = html5_link image_url
@@ -80,6 +85,6 @@ class GifmeLogic
     print image_url
     print " => #{final_url}" if final_url != image_url
     print "\n"
-    image_url
+    final_url
   end
 end
