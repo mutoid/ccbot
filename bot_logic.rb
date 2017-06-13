@@ -69,7 +69,7 @@ class BotLogic < Sinatra::Base
   post('/roll') do
     begin
       puts "Rolling dice"
-      n, m, modifier = params[:text].scan(/\d+/)
+      n, m, modifier = params[:text].scan(/-?\d+/)
       accum = [] 
       n = n.to_i
       m = m.to_i
