@@ -96,9 +96,9 @@ class BotLogic < Sinatra::Base
       output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum_display.to_s) + " -  #{accum.sum + modifier_sum}"
       puts "roll done"
       Chat.new(channel).chat_out(output)
-    rescue
+    rescue StandardError => e
         puts "problem with roll"
-        break "Problem with roll"
+        break "Problem with roll - #{e.message}"
     end
   end
 
