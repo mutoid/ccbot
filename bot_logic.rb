@@ -76,21 +76,25 @@ class BotLogic < Sinatra::Base
       accum = []
       accum_display = []
       modifier_sum = 0
-      rolls.each { |roll|
-        n, m, modifier = roll.scan(/-?\d+/)
-        n = n.to_i
-        m = m.to_i
-        if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
-          break "Invalid roll"
-        end
-        modifier_sum += modifier.to_i
-        n.to_i.times {
-          rand_num = Random.new.rand(m.to_i) + 1
-          accum.append(rand_num)
-          accum_display.append("#{rand_num}/#{m}")
+      r = catch(:invalid) {
+        rolls.each { |roll|
+          n, m, modifier = roll.scan(/-?\d+/)
+          n = n.to_i
+          m = m.to_i
+          if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
+            throw :invalid, "Invalid roll"
+          end
+          modifier_sum += modifier.to_i
+          n.to_i.times {
+            rand_num = Random.new.rand(m.to_i) + 1
+            accum.append(rand_num)
+            accum_display.append("#{rand_num}/#{m}")
+          }
         }
       }
-
+      if r == "Invalid roll"
+          break "Only one of the two can be greater than 20, and neither can be greater than 100"
+      end
 
       channel = params[:channel_id]
       output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum_display.to_s) + " -  #{accum.sum + modifier_sum}"
