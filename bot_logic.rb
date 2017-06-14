@@ -75,6 +75,7 @@ class BotLogic < Sinatra::Base
       end
       accum = []
       accum_display = []
+      modifier_sum = 0
       rolls.each { |roll|
         n, m, modifier = roll.scan(/-?\d+/)
         n = n.to_i
