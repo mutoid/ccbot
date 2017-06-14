@@ -92,7 +92,7 @@ class BotLogic < Sinatra::Base
 
 
       channel = params[:channel_id]
-      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum.to_s) + " -  #{accum.sum + modifier.to_i}"
+      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum_display.to_s) + " -  #{accum.sum + modifier.to_i}"
       puts "roll done"
       Chat.new(channel).chat_out(output)
     rescue
