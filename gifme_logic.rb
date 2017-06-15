@@ -60,7 +60,7 @@ class GifmeLogic
     puts results
     raise "No gifme.io results found" if results["data"].size == 0
 
-    images = results['data'].first(10).map { |data| data['link'] }.shuffle
+    images = results['data'].first(15).map { |data| html5_link data['link'] }.shuffle
     while ((image_url = images.pop))
       puts "Trying #{image_url}..."
       ### ANOTHER EXTERNAL REQUEST ###
@@ -80,11 +80,9 @@ class GifmeLogic
       end
     end
     raise "gifme.io results all had broken links.  Sorry." if !image_url
-    final_url = html5_link image_url
+    image_url
+  end
 
-    print image_url
-    print " => #{final_url}" if final_url != image_url
-    print "\n"
-    final_url
+  def fetch_header(image_uri)
   end
 end
