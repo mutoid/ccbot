@@ -67,7 +67,7 @@ class GifmeLogic
       begin
         uri = URI.parse(image_url)
         http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = false
+        http.use_ssl = uri.class == URI::HTTPS
         response = http.request_head(uri)
         ###
         if response.code.to_i != 200
