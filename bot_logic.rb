@@ -88,7 +88,7 @@ class BotLogic < Sinatra::Base
           n.to_i.times {
             rand_num = Random.new.rand(m.to_i) + 1
             accum.append(rand_num)
-            accum_display.append("#{rand_num}/#{m}")
+            accum_display.append(rand_num)
           }
         }
       }
