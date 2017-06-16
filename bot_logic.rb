@@ -17,6 +17,7 @@ require './gifme_logic'
 require './conversion_logic'
 require './megamoji_logic'
 require './pin_logic'
+require './roll_logic'
 require './user'
 require './run_command'
 
@@ -67,43 +68,13 @@ class BotLogic < Sinatra::Base
   end
 
   post('/roll') do
-    begin
-      puts "Rolling dice"
-      rolls = params[:text].scan(/\d+d\d+(?:(?:\+|-)\d+)?(?!d)/) #splits up the rolls, also restricts the format a roll can be in (must be ndm+modifier, modifier optional)
-      if rolls.length > 5
-          break "Too many rolls"
-      end
-      accum = []
-      accum_display = []
-      modifier_sum = 0
-      r = catch(:invalid) {
-        rolls.each { |roll|
-          n, m, modifier = roll.scan(/-?\d+/)
-          n = n.to_i
-          m = m.to_i
-          if (n <= 0 or m <= 0) or (n > 20 and m > 20) or (n > 100 or m > 100) # Non-numeric chars = 0, this limits size
-            throw :invalid, "Invalid roll"
-          end
-          modifier_sum += modifier.to_i
-          n.to_i.times {
-            rand_num = Random.new.rand(m.to_i) + 1
-            accum.append(rand_num)
-            accum_display.append(rand_num)
-          }
-        }
-      }
-      if r == "Invalid roll"
-          break "Only one of the two can be greater than 20, and neither can be greater than 100"
-      end
+    puts "Doing a roll..."
+    puts "Params: ", params
+    error, output = RollLogic.roll(params)
 
-      channel = params[:channel_id]
-      output = "#{params[:user_name]} rolled (#{params[:text]}) - " + (accum_display.to_s) + " -  #{accum.sum + modifier_sum}"
-      puts "roll done"
-      Chat.new(channel).chat_out(output)
-    rescue StandardError => e
-        puts "problem with roll"
-        break "Problem with roll - #{e.message}"
-    end
+    break error if error
+    
+    Chat.new(parmas[:channel_id]).chat_out(output)
   end
 
   post('/ruby') do
