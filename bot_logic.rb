@@ -74,7 +74,7 @@ class BotLogic < Sinatra::Base
 
     break error if error
     
-    Chat.new(parmas[:channel_id]).chat_out(output)
+    Chat.new(params[:channel_id]).chat_out(output)
   end
 
   post('/ruby') do
