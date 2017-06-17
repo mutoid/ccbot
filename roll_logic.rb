@@ -78,7 +78,7 @@ class RollLogic
   end
 
   def self.roll_test(text)
-    rolls = RollLogic.split_roll(text).gsub /\s/, ''
+    rolls = RollLogic.split_roll(text.gsub( /\s/, ''))
     error, accum, modifier_sum = RollLogic.sum_rolls(rolls)
     if error
       return error
