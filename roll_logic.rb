@@ -60,7 +60,7 @@ class RollLogic
         end
 
         roll_parsed["num_dice"].times {
-          rand_roll = roll_parsed["sign"] * (Random.new.rand(roll_parsed["dice_size"]) + 1)
+          rand_roll = roll_parsed["sign"] * rand(1..roll_parsed["dice_size"])
           temp_accum << rand_roll
         }
         temp_accum = temp_accum.sort.take(roll_parsed["keep"])
