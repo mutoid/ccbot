@@ -63,7 +63,7 @@ class RollLogic
           rand_roll = roll_parsed["sign"] * rand(1..roll_parsed["dice_size"])
           temp_accum << rand_roll
         }
-        temp_accum = temp_accum.sort.take(roll_parsed["keep"])
+        temp_accum = temp_accum.sort.reverse.take(roll_parsed["keep"])
         accum.concat(temp_accum)
 
       }
