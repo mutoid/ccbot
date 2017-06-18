@@ -91,7 +91,7 @@ class RollLogic
 
   def self.roll(params)
     begin
-      rolls = RollLogic.split_roll(params[:text])
+      rolls = RollLogic.split_roll(params[:text].gsub(/\s/, ''))
       error, accum, modifier_sum = RollLogic.sum_rolls(rolls)
 
       if error 
