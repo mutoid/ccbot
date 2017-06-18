@@ -60,10 +60,10 @@ class RollLogic
         end
 
         roll_parsed["num_dice"].times {
-          rand_roll = roll_parsed["sign"] * rand(1..roll_parsed["dice_size"])
+          rand_roll = rand(1..roll_parsed["dice_size"])
           temp_accum << rand_roll
         }
-        temp_accum = temp_accum.sort.take(roll_parsed["keep"])
+        temp_accum = temp_accum.sort.reverse.take(roll_parsed["keep"]).map { |i| roll_parsed["sign"] * i}
         accum.concat(temp_accum)
 
       }
@@ -78,7 +78,7 @@ class RollLogic
   end
 
   def self.roll_test(text)
-    rolls = RollLogic.split_roll(text).gsub /\s/, ''
+    rolls = RollLogic.split_roll(text.gsub( /\s/, ''))
     error, accum, modifier_sum = RollLogic.sum_rolls(rolls)
     if error
       return error
