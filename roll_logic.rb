@@ -5,7 +5,7 @@ class RollLogic
   def self.split_roll(roll)
     puts "Splitting roll into parts"
     #splits a set of rolls into their component parts which look like [+|-]<num_dice>d<dice_size>[k<num_keep>][(+|-)<modifier>]
-    regex = /(?<sign>-|\+|^)(?<num_dice>\d{1,3})?d(?<dice_size>\d{1,3})(?:k(?<keep>\d{1,3}))?(?<modifier>(?:[+-])\d{1,3})?(?=\+|-|$)/
+    regex = /(?<sign>-|\+|^)(?<num_dice>\d{1,3})?d(?<dice_size>\d{1,3})(?:(?:[k\^](?<keep_high>\d{1,3}))|(?:v(?<keep_low>\d{1,3})))?(?<modifier>(?:[+-])\d{1,3})?(?=\+|-|$)/
     #splits rolls into corresponding MatchData
     rolls = roll.to_enum(:scan, regex).map { Regexp.last_match }
     return rolls
@@ -25,8 +25,12 @@ class RollLogic
       full_roll["num_dice"] = 1
     end
 
-    if !full_roll["keep"]
-      full_roll["keep"] = full_roll["num_dice"]
+    if !full_roll["keep_high"]
+      full_roll["keep_high"] = full_roll["num_dice"]
+    end
+
+    if !full_roll["keep_low"]
+      full_roll["keep_low"] = full_roll["num_dice"]
     end
 
     if !full_roll["modifier"]
@@ -63,7 +67,12 @@ class RollLogic
           rand_roll = rand(1..roll_parsed["dice_size"])
           temp_accum << rand_roll
         }
-        temp_accum = temp_accum.sort.reverse.take(roll_parsed["keep"]).map { |i| roll_parsed["sign"] * i}
+        #take the low
+        temp_accum = temp_accum.sort.take(roll_parsed["keep_low"])
+        #take the high
+        temp_accum = temp_accum.reverse.take(roll_parsed["keep_high"])
+        #map the sign
+        temp_accum = temp_accum.map { |i| i * roll_parsed["sign"] }
         accum.concat(temp_accum)
 
       }
