@@ -224,3 +224,13 @@ end
 def emoji_word word
   word.gsub /(\w)/, ':\1\1:'
 end
+
+def wing(char)
+  raise "nope" if char.length != 1
+  return ":#{char.downcase}wing:" if char =~ /a-z0-9/i
+  char
+end
+
+def wingify(text)
+  text.each_char.map { |c| wing c }.join
+end
