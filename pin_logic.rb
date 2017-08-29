@@ -2,11 +2,11 @@ require 'json'
 require './pin'
 require './chat'
 require './user'
- 
+
 WEBHOOK_TOKEN = ENV['WEBHOOK_TOKEN']
 PINS_URL = "https://slack.com/api/pins.list"
 REMOVE_URL = "https://slack.com/api/pins.remove"
- 
+
 class PinLogic
   def initialize(params)
     @channel_id = params[:channel_id]
@@ -14,7 +14,7 @@ class PinLogic
     @query = params[:text]
     @params = params
   end
- 
+
   def quote
     # Rate limiting
     user = User.find_or_create(@params[:user_name], @params[:user_id])
@@ -22,7 +22,7 @@ class PinLogic
     command = @params[:command]
     commands_by_user = RunCommand.where user: user, command: command
     puts "#{user.user_name} has run this command #{commands_by_user.size} times."
- 
+
     if commands_by_user.size > 0
       last_run = commands_by_user.last
       too_recent = last_run.created_at + 5.minutes > Time.now
@@ -32,12 +32,12 @@ class PinLogic
         return "Try again in #{((last_run.created_at + 5.minutes) / 60.0).round(1)} minutes"
       end
     end
- 
+
     new_command = RunCommand.new user: user, command: command
     new_command.save
-   
+
     re = /@?(?<username>(?:\w+|\*))?\s*(?<channel>#\w+)?\s*(?:(?:")(?<query>[^"]+)(?:"))?/
-   
+
     arguments = match_to_h @query.match(re)
 
     pins = Pin.joins(:author)
@@ -50,7 +50,7 @@ class PinLogic
 
     if arguments[:channel]
       chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[arguments[:channel].gsub(/#/,'')]
-      return "No such channel exists" if !chan_id  
+      return "No such channel exists" if !chan_id
       pins = pins.where(channel_id: chan_id)
     end
 
@@ -62,7 +62,7 @@ class PinLogic
     return "No pins found" if !pin
     Chat.new(@channel_id).chat_out(pin.format)
   end
- 
+
   def pins_list
     puts "Getting pin list..."
     begin
@@ -85,7 +85,7 @@ class PinLogic
     end
     messages
   end
- 
+
   def remove_all_pins
     Thread.new do
       sleep(1)
@@ -105,7 +105,7 @@ class PinLogic
           puts "DB operation failed for pin #{pin} because #{e.message}"
           next # Don't delete the pin in the code below!
         end
- 
+
         begin
           remove_pin(@channel_id, pin[:ts])
         rescue Exception => e
@@ -115,13 +115,13 @@ class PinLogic
     end
     "Consider it done."
   end
- 
+
   private
- 
+
   def remove_pin(channel, timestamp)
     remote_request REMOVE_URL, channel: channel, timestamp: timestamp
   end
- 
+
   def remote_request(url, parameters)
     parameters = {token: WEBHOOK_TOKEN}.merge parameters
     uri = URI.parse(url)
@@ -131,11 +131,11 @@ class PinLogic
     request.set_form_data(parameters)
     response = http.request(request)
   end
- 
+
   def params
     @params
   end
- 
+
   def match_to_h(match)
     Hash[match.names.map { |n| [n.to_sym, match[n]] }]
   end
