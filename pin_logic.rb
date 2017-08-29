@@ -28,7 +28,7 @@ class PinLogic
       too_recent = last_run.created_at + 5.minutes > Time.now
       if too_recent && !power_user
         puts "#{user.user_name} last ran it too recently!"
-        puts "Should not run" 
+        puts "Should not run"
         return "Try again in #{((last_run.created_at + 5.minutes) / 60.0).round(1)} minutes"
       end
     end
@@ -36,25 +36,31 @@ class PinLogic
     new_command = RunCommand.new user: user, command: command
     new_command.save
 
-    if @query == 'random'
-        Chat.new(@channel_id).chat_out(Pin.all.to_a.sample.format)
-    elsif @query == 'channel'
-        pin = Pin.joins(:author).where(channel_id: @channel_id).sample
-        Chat.new(@channel_id).chat_out(pin.format)
-    elsif @query[0] == '#'
-        chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[name.gsub(/#/,'')]
-        return "No such channel exists" if !chan_id
-        pin = Pin.joins(:author).where(channel_id: chan_id).sample
-        return "No pins found" if !pin
-        Chat.new(chan_id).chat_out(pin.format)
-    else 
-        author = User.named(@query.split.first.gsub(/^@/,'')).first 
-        return "No pinned quotes by such a user" if !author
+    re = /@?(?<username>(?:\w+|\*))?\s*(?<channel>#\w+)?\s*(?:(?:")(?<query>[^"]+)(?:"))?/
 
-        pin = Pin.all_quotes_by(author.user_name).sample
-        return "No pins found" if !pin
-        Chat.new(@channel_id).chat_out(pin.format)
+    arguments = match_to_h @query.match(re)
+
+    pins = Pin.joins(:author)
+
+    if arguments[:username] && arguments[:username] != 'random' && arguments[:username] != '*'
+      author = User.named(arguments[:username]).first
+      return "Can't find a user named #{arguments[:username]}" if !author
+      pins = pins.all_quotes_by(author.user_name)
     end
+
+    if arguments[:channel]
+      chan_id = Pin.pluck(:channel_name, :channel_id).uniq.to_h[arguments[:channel].gsub(/#/,'')]
+      return "No such channel exists" if !chan_id
+      pins = pins.where(channel_id: chan_id)
+    end
+
+    if arguments[:query]
+      pins = pins.where("text ILIKE ?", "%#{arguments[:query]}%")
+    end
+
+    pin = pins.sample
+    return "No pins found" if !pin
+    Chat.new(@channel_id).chat_out(pin.format)
   end
 
   def pins_list
@@ -128,5 +134,9 @@ class PinLogic
 
   def params
     @params
+  end
+
+  def match_to_h(match)
+    Hash[match.names.map { |n| [n.to_sym, match[n]] }]
   end
 end
