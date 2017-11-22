@@ -22,6 +22,8 @@ class PinLogic
     command = @params[:command]
     commands_by_user = RunCommand.where user: user, command: command
     puts "#{user.user_name} has run this command #{commands_by_user.size} times."
+    # Fix Apple's fancy quotation marks
+    @query.gsub!(/[\u201C\u201D]/,?")
 
     if commands_by_user.size > 0
       last_run = commands_by_user.last
