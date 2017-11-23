@@ -38,7 +38,7 @@ class PinLogic
     new_command = RunCommand.new user: user, command: command
     new_command.save
 
-    re = /@?(?<username>(?:\w+|\*))?\s*(?<channel>#\w+)?\s*(?:(?:")(?<query>[^"]+)(?:"))?/
+    re = /@?(?<username>(?:[\w-]+|\*))?\s*(?<channel>#\w+)?\s*(?:(?:")(?<query>[^"]+)(?:"))?/
 
     arguments = match_to_h @query.match(re)
 
